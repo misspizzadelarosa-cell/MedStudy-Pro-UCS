@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedStudy Pro UCS - Morfofisiopatología Humana I</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        .gradient-header {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #c026d3 100%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .tab-active {
+            border-bottom: 3px solid #6366f1;
+            color: #4f46e5;
+            font-weight: 700;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
+
+    <!-- Top Gamification Header -->
+    <header class="gradient-header text-white shadow-lg sticky top-0 z-40">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-xl shadow-inner">
+                        <i class="fa-solid fa-stethoscope"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-extrabold text-lg tracking-tight leading-tight">MedStudy Pro UCS</h1>
+                        <p class="text-xs text-indigo-200 font-semibold">Morfofisiopatología Humana I • 2do Año PNFMIC</p>
+                    </div>
+                </div>
+                <!-- Badge for Mobile -->
+                <div class="md:hidden bg-black/30 border border-white/20 rounded-full px-3 py-1 flex items-center gap-2 text-xs font-bold">
+                    <span class="text-amber-400">🔥 <span id="user-streak-mob">1</span>d</span>
+                    <span class="text-white/40">•</span>
+                    <span class="text-indigo-200">Nivel <span id="user-level-mob">1</span></span>
+                </div>
+            </div>
+
+            <!-- Stats & Progress -->
+            <div class="w-full md:w-80 flex flex-col gap-1.5">
+                <div class="flex items-center justify-between text-xs">
+                    <span class="font-bold text-indigo-100" id="user-rank">Rango: Iniciando Histopatología</span>
+                    <span class="font-extrabold text-amber-300" id="user-xp-text">45 / 100 XP</span>
+                </div>
+                <div class="w-full bg-white/20 rounded-full h-2.5 overflow-hidden p-0.5">
+                    <div id="xp-bar" class="bg-amber-400 h-full rounded-full transition-all duration-500" style="width: 45%;"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Professor Gomez Banner -->
+    <div class="bg-white border-b border-slate-200 shadow-sm py-3 px-4">
+        <div class="max-w-5xl mx-auto flex items-start sm:items-center gap-3">
+            <div class="w-12 h-12 rounded-full bg-indigo-100 border-2 border-indigo-500 flex-shrink-0 flex items-center justify-center text-2xl shadow">
+                👨‍🔬
+            </div>
+            <div class="flex-1">
+                <div class="flex items-center gap-2">
+                    <h2 class="text-sm font-bold text-indigo-700">Prof. Gómez (Docente UCS)</h2>
+                    <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                </div>
+                <p id="prof-bubble" class="text-xs text-slate-600 font-medium leading-relaxed">
+                    ¡Saludos futuro médico de la patria! He cargado el temario oficial de Morfofisiopatología Humana I (Semanas 1 a 12) y las Baterías de Exámenes UCS. Explora la biblioteca, resuelve retos socráticos o entrena en el simulador.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="bg-white border-b border-slate-200 sticky top-[68px] z-30 shadow-sm">
+        <div class="max-w-5xl mx-auto flex overflow-x-auto text-sm font-semibold text-slate-500 no-scrollbar">
+            <button onclick="switchTab('library')" id="tab-btn-library" class="px-5 py-3 flex items-center gap-2 whitespace-nowrap tab-active transition-colors">
+                <i class="fa-solid fa-book-bookmark text-indigo-600"></i> 📚 Biblioteca UCS
+            </button>
+            <button onclick="switchTab('socratic')" id="tab-btn-socratic" class="px-5 py-3 flex items-center gap-2 whitespace-nowrap hover:text-indigo-600 transition-colors">
+                <i class="fa-solid fa-comments text-indigo-600"></i> 💬 Diálogo Socrático
+            </button>
+            <button onclick="switchTab('puzzle')" id="tab-btn-puzzle" class="px-5 py-3 flex items-center gap-2 whitespace-nowrap hover:text-indigo-600 transition-colors">
+                <i class="fa-solid fa-puzzle-piece text-indigo-600"></i> 🧩 Rompecabezas
+            </button>
+            <button onclick="switchTab('exam')" id="tab-btn-exam" class="px-5 py-3 flex items-center gap-2 whitespace-nowrap hover:text-indigo-600 transition-colors">
+                <i class="fa-solid fa-file-pen text-indigo-600"></i> 📝 Simulador Examen
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content Body -->
+    <main class="max-w-5xl mx-auto w-full p-4 flex-1">
+
+        <!-- TAB 1: BIBLIOTECA UCS -->
+        <section id="content-library" class="space-y-6">
+            <!-- Hero Banner -->
+            <div class="relative rounded-2xl overflow-hidden shadow-md bg-gradient-to-r from-slate-900 to-indigo-950 text-white p-6 md:p-8">
+                <div class="relative z-10 max-w-2xl">
+                    <span class="bg-indigo-500/30 text-indigo-300 text-xs font-extrabold uppercase tracking-wider px-3 py-1 rounded-full border border-indigo-400/30 mb-3 inline-block">Programa Oficial PNFMIC</span>
+                    <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight mb-2">Morfofisiopatología Humana I</h2>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-4">
+                        Accede a los 12 Planes de Clase Oficiales, resúmenes del Robbins & Cotran 10ma Ed., Guías de la Dra. Araceli Lantigua, Software NEOPAT y tus documentos guardados.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Bookshelf Section -->
+            <div>
+                <h3 class="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-3">Libros de Texto y Fuentes Oficiales (Toca para leer)</h3>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" id="bookshelf-grid">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Class Plans Section -->
+            <div>
+                <h3 class="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-3">Planes de Clase Oficiales UCS (Semanas 1 a 12)</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="class-plans-grid">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Custom Uploaded Documents -->
+            <div>
+                <h3 class="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-3">Agregar / Guardar Nuevas Guías de Estudio</h3>
+                <div class="glass-card p-5 rounded-2xl space-y-3">
+                    <div class="flex items-center gap-2 text-indigo-700 font-bold">
+                        <i class="fa-solid fa-file-arrow-up"></i>
+                        <h4>Importar Apuntes o Guía Personal</h4>
+                    </div>
+                    <input type="text" id="custom-title-input" placeholder="Título del documento (ej. Resumen de Genética)" class="w-full px-4 py-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <textarea id="custom-content-input" rows="3" placeholder="Pega aquí el contenido de tus notas o resumen..." class="w-full px-4 py-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                    <button onclick="saveCustomGuide()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl shadow transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-plus"></i> Guardar en Biblioteca Local (+30 XP)
+                    </button>
+                    <div id="custom-guides-list" class="space-y-2 pt-2">
+                        <!-- Custom guides list -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: CHAT SOCRÁTICO -->
+        <section id="content-socratic" class="hidden space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="font-extrabold text-slate-800 text-lg">Tutoría Socrática Activa</h3>
+                    <p class="text-xs text-indigo-600 font-semibold" id="socratic-topic-title">Tema Activo: Lesión Celular e Infarto</p>
+                </div>
+                <button onclick="resetSocraticChat()" class="px-3 py-1.5 text-xs font-bold text-slate-600 border border-slate-300 rounded-lg hover:bg-slate-100 flex items-center gap-1.5">
+                    <i class="fa-solid fa-rotate-right"></i> Reiniciar
+                </button>
+            </div>
+
+            <!-- Messages Log -->
+            <div id="chat-messages-container" class="bg-white border border-slate-200 rounded-2xl p-4 h-[380px] overflow-y-auto space-y-3 shadow-inner">
+                <!-- Chat bubbles added by JS -->
+            </div>
+
+            <!-- Interactive Clinical Options -->
+            <div id="socratic-options-container" class="space-y-2">
+                <p class="text-xs font-extrabold text-slate-400 uppercase">Selecciona tu argumento clínico:</p>
+                <!-- Options buttons added by JS -->
+            </div>
+
+            <!-- Custom Question Input -->
+            <div class="flex gap-2 pt-2">
+                <input type="text" id="socratic-user-input" placeholder="Haz una consulta sobre el temario al Prof. Gómez..." class="flex-1 px-4 py-2.5 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <button onclick="sendUserSocraticQuestion()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- TAB 3: ROMPECABEZAS -->
+        <section id="content-puzzle" class="hidden space-y-4">
+            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-5 rounded-2xl shadow">
+                <h3 class="text-lg font-extrabold mb-1">Rompecabezas Morfo-Histológico</h3>
+                <p class="text-xs text-indigo-100">Relaciona cada alteración molecular u organela con su síndrome o patología correspondiente. ¡Gana +20 XP por acierto!</p>
+            </div>
+
+            <div id="puzzle-feedback" class="bg-blue-50 border border-blue-200 text-blue-900 px-4 py-3 rounded-xl text-sm font-bold flex items-center gap-2">
+                <i class="fa-solid fa-circle-info text-blue-600"></i> Selecciona un elemento de la izquierda y luego su correspondencia a la derecha.
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Left Column: Organelles / Causes -->
+                <div class="space-y-2">
+                    <h4 class="text-xs font-bold text-slate-400 uppercase">1. Causa / Alteración Subcelular</h4>
+                    <div id="puzzle-left-col" class="space-y-2">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Right Column: Syndromes / Pathologies -->
+                <div class="space-y-2">
+                    <h4 class="text-xs font-bold text-slate-400 uppercase">2. Síndrome / Expresión Clínica</h4>
+                    <div id="puzzle-right-col" class="space-y-2">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: SIMULADOR DE EXAMEN -->
+        <section id="content-exam" class="hidden space-y-4">
+            <div class="flex items-center justify-between">
+                <span class="bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-1 rounded-lg" id="exam-tag">Caso Examen UCS</span>
+                <span class="text-xs font-extrabold text-slate-700" id="exam-score-text">Puntaje: 0 / 0 Resueltas</span>
+            </div>
+
+            <!-- Vignette Card -->
+            <div class="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm space-y-3">
+                <h4 class="text-xs font-extrabold text-indigo-600 uppercase">Caso Clínico de Examen Oficial:</h4>
+                <p id="exam-vignette" class="text-sm text-slate-800 leading-relaxed font-medium">
+                    <!-- Vignette text populated by JS -->
+                </p>
+            </div>
+
+            <!-- Options List -->
+            <div id="exam-options-list" class="space-y-2.5">
+                <!-- Options populated by JS -->
+            </div>
+
+            <!-- Explanation Box -->
+            <div id="exam-explanation-box" class="hidden bg-purple-50 border border-purple-200 p-4 rounded-2xl space-y-2">
+                <h5 class="text-xs font-extrabold text-purple-900 uppercase">Crítica Evaluativa del Prof. Gómez:</h5>
+                <p id="exam-explanation-text" class="text-xs text-purple-900 leading-relaxed font-medium"></p>
+                <button onclick="nextExamQuestion()" class="w-full mt-2 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow transition">
+                    Siguiente Caso Clínico ➔
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FULL SCREEN READER MODAL -->
+    <div id="reader-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-3xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+            <!-- Modal Header -->
+            <div class="gradient-header text-white p-4 flex items-center justify-between">
+                <div>
+                    <span id="modal-tag" class="bg-white/20 text-white text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-md">Lectura Oficial</span>
+                    <h3 id="modal-title" class="font-extrabold text-lg leading-tight">Título del Documento</h3>
+                </div>
+                <button onclick="closeReaderModal()" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center font-bold">
+                    ✕
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div id="modal-body" class="p-6 overflow-y-auto flex-1 space-y-4 text-sm text-slate-700 leading-relaxed">
+                <!-- Content injected dynamically -->
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="bg-slate-50 border-t border-slate-200 p-3 flex justify-end">
+                <button onclick="closeReaderModal()" class="px-5 py-2 bg-indigo-600 text-white font-bold text-xs rounded-xl hover:bg-indigo-700 shadow">
+                    Entendido / Cerrar Lectura
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Embedded Application Logic JavaScript -->
+    <script>
+        // State variables
+        let userXp = 45;
+        let userLevel = 1;
+        let userStreak = 1;
+        let activeSocraticIndex = 0;
+        let selectedPuzzleOrganelleId = null;
+        let matchedPuzzleIds = new Set();
+        let activeExamIndex = 0;
+        let examScore = 0;
+        let examAnsweredCount = 0;
+        let isExamAnswered = false;
+
+        const rankTitles = [
+            "Iniciando Histopatología",
+            "Inspector de Necrosis",
+            "Maestro de Robbins",
+            "Genetista Comunitario",
+            "Experto en Morfofisiopatología"
+        ];
+
+        // Academic Books Preset
+        const academicBooks = [
+            {
+                id: 'robbins',
+                title: 'Robbins y Cotran',
+                author: 'Patología Estructural y Funcional (10ma Ed.)',
+                tag: 'Pilar Fundamental',
+                color: 'from-rose-700 to-rose-900',
+                summary: 'El texto de referencia mundial para la anatomía patológica. Aborda la lesión celular, respuesta inflamatoria, reparación tisular, inmunopatología y genética.',
+                highlights: [
+                    'Capítulo 1: Lesión celular, necrosis (coagulativa, licuefactiva, caseosa, grasa) y apoptosis.',
+                    'Capítulo 2: Inflamación aguda y crónica, acontecimientos leucocitarios y mediadores químicos.',
+                    'Capítulo 3: Reparación tisular, regeneración y cicatrización por 1ra y 2da intención.'
+                ],
+                tip: 'Recuerda diferenciar Necrosis Licuefactiva (infarto cerebral) de Necrosis Coagulativa (infarto de miocardio).'
+            },
+            {
+                id: 'lantigua',
+                title: 'Dra. Araceli Lantigua',
+                author: 'Introducción a la Genética Médica',
+                tag: 'Genética UCS',
+                color: 'from-indigo-700 to-indigo-900',
+                summary: 'Obra insigne de la formación médica en el programa PNFMIC / UCS. Detalla herencia mendeliana, citogenética, aberraciones cromosómicas y Hardy-Weinberg.',
+                highlights: [
+                    'Capítulo 5: Transmisión de simples mutaciones y genealogías.',
+                    'Capítulo 8: Aberraciones cromosómicas numéricas y estructurales.',
+                    'Capítulo 10: Herencia mitocondrial, impronta genómica (Angelman vs Prader-Willi).'
+                ],
+                tip: 'Los Cuerpos de Barr equivalen al número de cromosomas X menos 1: (X - 1).'
+            },
+            {
+                id: 'rubin',
+                title: 'Rubin y Strayer',
+                author: 'Fundamentos Clinicopatológicos',
+                tag: 'Clínico-Morfológico',
+                color: 'from-amber-600 to-amber-800',
+                summary: 'Texto enfocado en la correlación anatomo-clínica. Explica fisiopatología del shock, trastornos hemodinámicos y cascada de citoquinas de fase aguda.',
+                highlights: [
+                    'Congestión pasiva hepática y pulmonar.',
+                    'Edema inflamatorio vs no inflamatorio (exudado vs trasudado).',
+                    'Triada de Virchow en la patogenia de trombos.'
+                ],
+                tip: 'Atención a la cascada de citoquinas IL-1, TNF y su efecto en el centro termorregulador hipotalámico (fiebre).'
+            },
+            {
+                id: 'neopat',
+                title: 'Software NEOPAT',
+                author: 'Diagnóstico Histopatológico UCS',
+                tag: 'Láminas Prácticas',
+                color: 'from-emerald-600 to-emerald-800',
+                summary: 'Colección de láminas e imágenes histopatológicas de las clases prácticas de Morfofisiopatología I en la UCS.',
+                highlights: [
+                    'Lámina de Necrosis Caseosa Tuberculosa con células de Langhans.',
+                    'Lámina de Esteatosis Hepática con vacuolas lipídicas.',
+                    'Lámina de Glomeruloesclerosis Nodular de Kimmelstiel-Wilson.'
+                ],
+                tip: 'En la inflamación granulomatosa, busca siempre las células gigantes multinucleadas tipo Langhans.'
+            }
+        ];
+
+        // 12 UCS Class Plans
+        const classPlans = [
+            {
+                id: 'sem1', week: 1, title: 'Procesos Patológicos y Métodos de Estudio',
+                summary: 'Etiología, patogenia, cambios morfológicos, fisiopatología, semiología y patocronía.',
+                content: 'La Morfofisiopatología Humana estudia las alteraciones estructurales y funcionales frente a la agresión. Se dividen en genéticos y adquiridos.'
+            },
+            {
+                id: 'sem2', week: 2, title: 'Métodos de Estudio y Muestras Biológicas',
+                summary: 'Tipos de muestras biológicas, requisitos de toma, biopsias y principios bioéticos.',
+                content: 'Requisitos de ayuno y conservación de muestras. Biopsias: incisional, excisional, PAAF, por congelación y extendido citológico.'
+            },
+            {
+                id: 'sem3', week: 3, title: 'Adaptación Celular y Lesión Hipóxica',
+                summary: 'Atrofia, Hipertrofia, Hiperplasia, Metaplasia y daño por hipoxia.',
+                content: 'Mecanismos de la hipoxia: fallo de la bomba Na+/K+ ATPasa, glucólisis anaeróbica, caída del pH e hinchazón celular.'
+            },
+            {
+                id: 'sem4', week: 4, title: 'Lesión Reversible, Necrosis y Apoptosis',
+                summary: 'Tumefacción, Esteatosis, Necrosis (Coagulativa, Licuefactiva, Caseosa, Grasa) y Apoptosis.',
+                content: 'Necrosis por coagulación (infarto miocárdico). Necrosis licuefactiva (infarto cerebral). Apoptosis mediada por caspasas y Bcl-2.'
+            },
+            {
+                id: 'sem5', week: 5, title: 'Acumulaciones, Aterosclerosis y Diabetes Mellitus',
+                summary: 'Placa de ateroma, microangiopatía diabética, Kimmelstiel-Wilson, Calcificaciones.',
+                content: 'Glomeruloesclerosis de Kimmelstiel-Wilson en riñón diabético. Calcificación distrófica (tejido muerto) vs metastásica (hipercalcemia).'
+            },
+            {
+                id: 'sem6', week: 6, title: 'Respuesta Inflamatoria Aguda y Crónica',
+                summary: 'Fenómenos leucocitarios, histamina, exudado, granulomas y reactantes de fase aguda.',
+                content: 'Pasos: Marginación -> Rodamiento -> Adhesión -> Migración -> Quimiotaxis -> Fagocitosis. Células epitelioides en granulomas.'
+            },
+            {
+                id: 'sem7', week: 7, title: 'Reparación Tisular y Cicatrización',
+                summary: 'Células lábiles, estables y permanentes. Tejido de granulación, TGF-β, VEGF.',
+                content: 'Cicatrización por 1ra intención (cirugía limpia) vs 2da intención (gran pérdida de tejido con contracción por miofibroblastos).'
+            },
+            {
+                id: 'sem8', week: 8, title: 'Transmisión de Simples Mutaciones',
+                summary: 'Herencia autosómica dominante, recesiva, ligada al X. Penetrancia y pleiotropía.',
+                content: 'En herencia recesiva ligada al X, el padre enfermo transmite el alelo al 100% de sus hijas (portadoras).'
+            },
+            {
+                id: 'sem9', week: 9, title: 'Interferencias Biológicas y Bases Bioquímicas',
+                summary: 'Herencia mitocondrial, impronta genómica (Angelman vs Prader-Willi), Frágil X.',
+                content: 'Transmisión mitocondrial exclusivamente materna. Deleción 15q11-13 materna = Angelman, paterna = Prader-Willi.'
+            },
+            {
+                id: 'sem10', week: 10, title: 'Aberraciones Cromosómicas',
+                summary: 'Aneuploidías (Down, Patau, Edwards, Turner 45,X, Klinefelter 47,XXY) y Cuerpos de Barr.',
+                content: 'Número de Cuerpos de Barr = (X - 1). En Turner (45,X) hay 0 Cuerpos de Barr. En Klinefelter (47,XXY) hay 1.'
+            },
+            {
+                id: 'sem11', week: 11, title: 'Marcadores Genéticos y Genética Poblacional',
+                summary: 'Sistemas ABO, Rh, HLA y Ley de Hardy-Weinberg (p + q = 1, p² + 2pq + q² = 1).',
+                content: 'Padres AO y BO pueden engendrar un hijo OO (Grupo O). Principios de Hardy-Weinberg en poblaciones en equilibrio.'
+            },
+            {
+                id: 'sem12', week: 12, title: 'Herencia Multifactorial y Asesoramiento Genético',
+                summary: 'Malformación, Deformación, Disrupción, Displasia y Diagnóstico Prenatal.',
+                content: 'Malformación = defecto primario intrínseco. Disrupción = ruptura secundaria por brida amniótica. Deformación = fuerza mecánica.'
+            }
+        ];
+
+        // Socratic Dialogues Preset
+        const socraticDialogues = [
+            {
+                id: 'd1',
+                topicTitle: 'Tema 2: Lesión Celular e Infarto',
+                prompt: 'Colega del 2do año UCS: En la necropsia de un paciente fallecido por infarto agudo de miocardio, observas al microscopio cardiomiocitos eosinófilos sin núcleo (cariólisis) pero conservando su arquitectura celular. ¿Qué tipo de necrosis es y cómo la justificas?',
+                options: [
+                    { text: 'Necrosis Coagulativa, por desnaturalización proteica y de enzimas lisosómicas.', correct: true, response: '¡Impecable! La necrosis coagulativa denatura tanto las proteínas estructurales como las enzimáticas, inhibiendo la proteólisis rápida. +20 XP', xp: 20 },
+                    { text: 'Necrosis Licuefactiva, por digestión enzimática rápida.', correct: false, response: 'La necrosis licuefactiva transforma el tejido en líquido y es típica del cerebro o abscesos, no del corazón. +10 XP', xp: 10 },
+                    { text: 'Necrosis Caseosa, propia de la tuberculosis.', correct: false, response: 'La necrosis caseosa presenta aspecto fraccionado de queso en granulomas. +10 XP', xp: 10 }
+                ]
+            },
+            {
+                id: 'd2',
+                topicTitle: 'Tema 5: Citogenética y Cuerpos de Barr',
+                prompt: 'Un recien nacido presenta baja talla, cuello palmeado e hidrops fetal. La prueba de la cromatina sexual revela CERO (0) Cuerpos de Barr. Basándote en la regla de Cuerpos de Barr = (X - 1) de la Dra. Lantigua, ¿cuál es el diagnóstico?',
+                options: [
+                    { text: 'Síndrome de Turner (Fórmula 45,X).', correct: true, response: '¡Excelente! Al poseer 1 solo cromosoma X, (1 - 1) = 0 Cuerpos de Barr. +25 XP', xp: 25 },
+                    { text: 'Síndrome de Klinefelter (Fórmula 47,XXY).', correct: false, response: 'En Klinefelter hay 2 X, por ende tendría (2 - 1) = 1 Cuerpo de Barr. +10 XP', xp: 10 }
+                ]
+            }
+        ];
+
+        // Pathology Puzzle Preset
+        const puzzleItems = [
+            { id: 'p1', icon: '⚡', orgTitle: 'Fallo bomba Na+/K+', orgDesc: 'Aumento de sodio y agua celular', synTitle: 'Tumefacción Celular', synDesc: 'Lesión reversible en túbulos renales' },
+            { id: 'p2', icon: '🫀', orgTitle: 'Isquemia Miocárdica', orgDesc: 'Desnaturalización proteica >12h', synTitle: 'Necrosis Coagulativa', synDesc: 'Lápida sepulcral en cardiomiocitos' },
+            { id: 'p3', icon: '🧠', orgTitle: 'Autólisis en SNC', orgDesc: 'Digestión enzimática lisosómica', synTitle: 'Necrosis Licuefactiva', synDesc: 'Cavidad quística en infarto cerebral' },
+            { id: 'p4', icon: '🧫', orgTitle: 'Granuloma Tuberculoso', orgDesc: 'Células epitelioides y Langhans', synTitle: 'Necrosis Caseosa', synDesc: 'Aspecto blanquecino tipo queso' }
+        ];
+
+        // Exam Questions Preset (From UCS Official Exams)
+        const examQuestions = [
+            {
+                tag: 'Batería Oficial 2024 - Pregunta I',
+                vignette: 'En la cervicitis crónica se produce una sustitución del epitelio cilíndrico endocervical por un epitelio escamoso estratificado más resistente a la irritación. Esta respuesta adaptativa se clasifica como:',
+                options: [
+                    { key: 'A', text: 'Metaplasia escamosa.', correct: true },
+                    { key: 'B', text: 'Hiperplasia endometrial.', correct: false },
+                    { key: 'C', text: 'Atrofia fisiológica.', correct: false },
+                    { key: 'D', text: 'Displasia severa.', correct: false }
+                ],
+                explanation: 'La Metaplasia es el cambio reversible en el que un tipo celular adulto (epitelio cilíndrico) es sustituido por otro tipo adulto (escamoso) para tolerar un ambiente adverso.'
+            },
+            {
+                tag: 'Batería Oficial 2020 - Pregunta V',
+                vignette: 'Sobre los patrones de herencia genética, ¿cuál de los siguientes enunciados sobre el Síndrome de Down es VERDADERO?',
+                options: [
+                    { key: 'A', text: 'Se produce por mutación de un solo gen con patrón mendeliano recesivo.', correct: false },
+                    { key: 'B', text: 'La causa más común es la no disyunción meiótica materna y su frecuencia aumenta con la edad materna.', correct: true },
+                    { key: 'C', text: 'Presenta 2 Cuerpos de Barr en el feto femenino.', correct: false },
+                    { key: 'D', text: 'Es una enfermedad de transmisión exclusivamente paternal.', correct: false }
+                ],
+                explanation: 'La no disyunción en la Meiosis I materna representa más del 90% de los casos de Trisomía 21 (Síndrome de Down) y está directamente correlacionada con la edad materna avanzada.'
+            }
+        ];
+
+        // Custom Guides stored in localStorage
+        let customGuides = JSON.parse(localStorage.getItem('medstudy_custom_guides') || '[]');
+
+        // INITIALIZATION
+        window.addEventListener('DOMContentLoaded', () => {
+            renderBookshelf();
+            renderClassPlans();
+            renderCustomGuides();
+            renderSocraticChat();
+            renderPuzzle();
+            renderExamQuestion();
+            updateGamificationUI();
+        });
+
+        // GAMIFICATION & UI UPDATES
+        function addXp(amount) {
+            userXp += amount;
+            if (userXp >= 100) {
+                userXp -= 100;
+                userLevel++;
+                alert(`🎉 ¡Felicidades Colega! Has subido al Nivel ${userLevel}. Rango: ${getRankTitle(userLevel)}.`);
+            }
+            updateGamificationUI();
+        }
+
+        function getRankTitle(lvl) {
+            return rankTitles[Math.min(lvl - 1, rankTitles.length - 1)];
+        }
+
+        function updateGamificationUI() {
+            document.getElementById('user-xp-text').innerText = `${userXp} / 100 XP`;
+            document.getElementById('xp-bar').style.width = `${userXp}%`;
+            document.getElementById('user-rank').innerText = `Rango: ${getRankTitle(userLevel)}`;
+            document.getElementById('user-level-mob').innerText = userLevel;
+            document.getElementById('user-streak-mob').innerText = userStreak;
+        }
+
+        // TAB SWITCHING
+        function switchTab(tab) {
+            const tabs = ['library', 'socratic', 'puzzle', 'exam'];
+            tabs.forEach(t => {
+                document.getElementById(`content-${t}`).classList.add('hidden');
+                document.getElementById(`tab-btn-${t}`).classList.remove('tab-active');
+            });
+
+            document.getElementById(`content-${tab}`).classList.remove('hidden');
+            document.getElementById(`tab-btn-${tab}`).classList.add('tab-active');
+
+            const bubbles = {
+                library: 'Biblioteca UCS: Toca cualquier libro o plan de clase oficial para abrir el lector interactivo de Morfofisiopatología.',
+                socratic: 'Método Socrático: Responde a mis preguntas de razonamiento clínico para acumular XP y desbloquear niveles.',
+                puzzle: 'Rompecabezas: Vincula cada causa subcelular con su respectivo cuadro histopatológico.',
+                exam: 'Simulador de Examen: Preguntas de casos clínicos de las Baterías Oficiales de la UCS.'
+            };
+            document.getElementById('prof-bubble').innerText = bubbles[tab];
+        }
+
+        // TAB 1: BIBLIOTECA
+        function renderBookshelf() {
+            const container = document.getElementById('bookshelf-grid');
+            container.innerHTML = academicBooks.map(b => `
+                <div onclick="openBookModal('${b.id}')" class="bg-gradient-to-b ${b.color} text-white p-4 rounded-2xl shadow-md cursor-pointer hover:scale-105 transition duration-200 flex flex-col justify-between h-48">
+                    <div>
+                        <span class="bg-white/20 text-white text-[10px] font-extrabold uppercase px-2 py-0.5 rounded">${b.tag}</span>
+                        <h4 class="font-extrabold text-sm mt-2 leading-tight">${b.title}</h4>
+                        <p class="text-[11px] text-white/80 mt-1 line-clamp-2">${b.author}</p>
+                    </div>
+                    <button class="w-full py-1 bg-white text-slate-900 font-bold text-xs rounded-xl shadow hover:bg-slate-100 transition">
+                        📖 Leer Resumen
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function renderClassPlans() {
+            const container = document.getElementById('class-plans-grid');
+            container.innerHTML = classPlans.map(p => `
+                <div onclick="openClassPlanModal('${p.id}')" class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm hover:border-indigo-400 hover:shadow transition cursor-pointer flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-700 flex flex-col items-center justify-center font-extrabold flex-shrink-0">
+                        <span class="text-[9px] uppercase">Sem</span>
+                        <span class="text-base leading-none">${p.week}</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-extrabold text-sm text-slate-800 truncate">${p.title}</h4>
+                        <p class="text-xs text-slate-500 line-clamp-2 mt-0.5">${p.summary}</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-indigo-500"></i>
+                </div>
+            `).join('');
+        }
+
+        function saveCustomGuide() {
+            const title = document.getElementById('custom-title-input').value.trim();
+            const content = document.getElementById('custom-content-input').value.trim();
+            if (!title || !content) {
+                alert('Por favor completa el título y contenido de la guía.');
+                return;
+            }
+
+            const newGuide = { id: Date.now().toString(), title, content };
+            customGuides.push(newGuide);
+            localStorage.setItem('medstudy_custom_guides', JSON.stringify(customGuides));
+
+            document.getElementById('custom-title-input').value = '';
+            document.getElementById('custom-content-input').value = '';
+
+            renderCustomGuides();
+            addXp(30);
+            alert(`¡Guía '${title}' guardada exitosamente! Se agregó a tu biblioteca local.`);
+        }
+
+        function renderCustomGuides() {
+            const container = document.getElementById('custom-guides-list');
+            if (customGuides.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-400 font-medium">No has guardado guías personales aún.</p>';
+                return;
+            }
+
+            container.innerHTML = customGuides.map(g => `
+                <div class="bg-blue-50 border border-blue-200 p-3 rounded-xl flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <i class="fa-solid fa-file-lines text-blue-600"></i>
+                        <span class="text-xs font-bold text-blue-900 truncate">${g.title}</span>
+                    </div>
+                    <button onclick="deleteCustomGuide('${g.id}')" class="text-xs text-rose-600 hover:text-rose-800 font-bold">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function deleteCustomGuide(id) {
+            customGuides = customGuides.filter(g => g.id !== id);
+            localStorage.setItem('medstudy_custom_guides', JSON.stringify(customGuides));
+            renderCustomGuides();
+        }
+
+        // READER MODALS
+        function openBookModal(bookId) {
+            const book = academicBooks.find(b => b.id === bookId);
+            if (!book) return;
+
+            document.getElementById('modal-tag').innerText = book.tag;
+            document.getElementById('modal-title').innerText = `${book.title} - ${book.author}`;
+            document.getElementById('modal-body').innerHTML = `
+                <div class="bg-indigo-50 border border-indigo-200 p-4 rounded-xl text-indigo-900 font-medium text-xs mb-3">
+                    💡 <strong>Consejo del Prof. Gómez:</strong> ${book.tip}
+                </div>
+                <h4 class="font-bold text-slate-900 text-sm">Resumen de la Obra:</h4>
+                <p>${book.summary}</p>
+                <h4 class="font-bold text-slate-900 text-sm pt-2">Núcleos Temáticos Clave:</h4>
+                <ul class="list-disc pl-5 space-y-1">
+                    ${book.highlights.map(h => `<li>${h}</li>`).join('')}
+                </ul>
+            `;
+            document.getElementById('reader-modal').classList.remove('hidden');
+            addXp(10);
+        }
+
+        function openClassPlanModal(planId) {
+            const plan = classPlans.find(p => p.id === planId);
+            if (!plan) return;
+
+            document.getElementById('modal-tag').innerText = `Semana ${plan.week} • Plan de Clase UCS`;
+            document.getElementById('modal-title').innerText = plan.title;
+            document.getElementById('modal-body').innerHTML = `
+                <div class="bg-purple-50 border border-purple-200 p-4 rounded-xl text-purple-900 font-medium text-xs mb-3">
+                    📚 <strong>Sumario de la Clase:</strong> ${plan.summary}
+                </div>
+                <h4 class="font-bold text-slate-900 text-sm">Contenido de Orientación Médica:</h4>
+                <p class="leading-relaxed">${plan.content}</p>
+                <div class="pt-3">
+                    <button onclick="closeReaderModal(); switchTab('socratic');" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow">
+                        💬 Discutir este tema con el Prof. Gómez en el Chat Socrático
+                    </button>
+                </div>
+            `;
+            document.getElementById('reader-modal').classList.remove('hidden');
+            addXp(15);
+        }
+
+        function closeReaderModal() {
+            document.getElementById('reader-modal').classList.add('hidden');
+        }
+
+        // TAB 2: SOCRATIC CHAT
+        function renderSocraticChat() {
+            const dialogue = socraticDialogues[activeSocraticIndex];
+            document.getElementById('socratic-topic-title').innerText = `Tema: ${dialogue.topicTitle}`;
+
+            const chatContainer = document.getElementById('chat-messages-container');
+            chatContainer.innerHTML = `
+                <div class="flex items-start gap-2.5">
+                    <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">👨‍🔬</div>
+                    <div class="bg-indigo-50 border border-indigo-100 p-3 rounded-2xl rounded-tl-none max-w-[85%] text-xs text-slate-800 leading-relaxed font-medium">
+                        ${dialogue.prompt}
+                    </div>
+                </div>
+            `;
+
+            const optionsContainer = document.getElementById('socratic-options-container');
+            optionsContainer.innerHTML = `
+                <p class="text-xs font-extrabold text-slate-400 uppercase">Selecciona tu argumento clínico:</p>
+                ${dialogue.options.map((opt, idx) => `
+                    <button onclick="selectSocraticOption(${idx})" class="w-full text-left p-3 bg-white border border-slate-200 hover:border-indigo-500 rounded-xl text-xs text-slate-800 font-medium transition shadow-sm">
+                        ${opt.text}
+                    </button>
+                `).join('')}
+            `;
+        }
+
+        function selectSocraticOption(optIndex) {
+            const dialogue = socraticDialogues[activeSocraticIndex];
+            const opt = dialogue.options[optIndex];
+
+            const chatContainer = document.getElementById('chat-messages-container');
+
+            // Add student response
+            chatContainer.innerHTML += `
+                <div class="flex items-start gap-2.5 justify-end">
+                    <div class="bg-indigo-600 text-white p-3 rounded-2xl rounded-tr-none max-w-[85%] text-xs leading-relaxed font-medium">
+                        ${opt.text}
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-sm font-bold flex-shrink-0">🎓</div>
+                </div>
+            `;
+
+            // Add professor feedback
+            chatContainer.innerHTML += `
+                <div class="flex items-start gap-2.5">
+                    <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">👨‍🔬</div>
+                    <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-2xl rounded-tl-none max-w-[85%] text-xs text-emerald-900 leading-relaxed font-medium">
+                        ${opt.response}
+                    </div>
+                </div>
+            `;
+
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            addXp(opt.xp);
+
+            if (opt.correct) {
+                setTimeout(() => {
+                    activeSocraticIndex = (activeSocraticIndex + 1) % socraticDialogues.length;
+                    renderSocraticChat();
+                }, 2500);
+            }
+        }
+
+        function sendUserSocraticQuestion() {
+            const input = document.getElementById('socratic-user-input');
+            const query = input.value.trim();
+            if (!query) return;
+
+            const chatContainer = document.getElementById('chat-messages-container');
+            chatContainer.innerHTML += `
+                <div class="flex items-start gap-2.5 justify-end">
+                    <div class="bg-indigo-600 text-white p-3 rounded-2xl rounded-tr-none max-w-[85%] text-xs leading-relaxed font-medium">
+                        ${query}
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-sm font-bold flex-shrink-0">🎓</div>
+                </div>
+            `;
+
+            input.value = '';
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            setTimeout(() => {
+                chatContainer.innerHTML += `
+                    <div class="flex items-start gap-2.5">
+                        <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">👨‍🔬</div>
+                        <div class="bg-indigo-50 border border-indigo-100 p-3 rounded-2xl rounded-tl-none max-w-[85%] text-xs text-slate-800 leading-relaxed font-medium">
+                            Excelente pregunta sobre Morfofisiopatología. Recuerda que ante '${query}', debes revisar la etiología molecular en el Robbins y la correlación con los reactantes de fase aguda en el laboratorio. ¡Ganas +15 XP por tu iniciativa de estudio!
+                        </div>
+                    </div>
+                `;
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+                addXp(15);
+            }, 1000);
+        }
+
+        function resetSocraticChat() {
+            activeSocraticIndex = 0;
+            renderSocraticChat();
+        }
+
+        // TAB 3: PUZZLE
+        function renderPuzzle() {
+            const leftCol = document.getElementById('puzzle-left-col');
+            const rightCol = document.getElementById('puzzle-right-col');
+
+            leftCol.innerHTML = puzzleItems.map(item => {
+                const isMatched = matchedPuzzleIds.has(item.id);
+                const isSelected = selectedPuzzleOrganelleId === item.id;
+                return `
+                    <div onclick="selectPuzzleOrganelle('${item.id}')" class="p-3 rounded-xl border text-xs cursor-pointer transition ${isMatched ? 'bg-emerald-50 border-emerald-300 text-emerald-900 pointer-events-none' : isSelected ? 'bg-indigo-100 border-indigo-500 font-bold' : 'bg-white border-slate-200 hover:border-indigo-400'} flex items-center gap-2.5">
+                        <span class="text-base">${item.icon}</span>
+                        <div>
+                            <div class="font-bold">${item.orgTitle}</div>
+                            <div class="text-[10px] text-slate-500">${item.orgDesc}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            rightCol.innerHTML = puzzleItems.map(item => {
+                const isMatched = matchedPuzzleIds.has(item.id);
+                return `
+                    <div onclick="selectPuzzleSyndrome('${item.id}')" class="p-3 rounded-xl border text-xs cursor-pointer transition ${isMatched ? 'bg-emerald-50 border-emerald-300 text-emerald-900 pointer-events-none' : 'bg-white border-slate-200 hover:border-indigo-400'}">
+                        <div class="font-bold text-indigo-700">${item.synTitle}</div>
+                        <div class="text-[10px] text-slate-500">${item.synDesc}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function selectPuzzleOrganelle(id) {
+            if (matchedPuzzleIds.has(id)) return;
+            selectedPuzzleOrganelleId = id;
+            document.getElementById('puzzle-feedback').innerHTML = `<i class="fa-solid fa-hand-pointer text-indigo-600"></i> Elemento seleccionado. Toca su patología correspondiente a la derecha.`;
+            renderPuzzle();
+        }
+
+        function selectPuzzleSyndrome(id) {
+            if (!selectedPuzzleOrganelleId) {
+                document.getElementById('puzzle-feedback').innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-600"></i> ¡Primero selecciona un elemento de la izquierda!`;
+                return;
+            }
+
+            if (selectedPuzzleOrganelleId === id) {
+                matchedPuzzleIds.add(id);
+                selectedPuzzleOrganelleId = null;
+                document.getElementById('puzzle-feedback').innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600"></i> ¡Asociación correcta! +20 XP de Morfofisiopatología.`;
+                addXp(20);
+
+                if (matchedPuzzleIds.size === puzzleItems.length) {
+                    document.getElementById('puzzle-feedback').innerHTML = `🎉 ¡Rompecabezas completado con éxito! Has demostrado perfecto dominio de las organelas y síndromes.`;
+                    addXp(50);
+                }
+            } else {
+                document.getElementById('puzzle-feedback').innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600"></i> Asociación incorrecta. Revisa la lección e intenta de nuevo.`;
+            }
+            renderPuzzle();
+        }
+
+        // TAB 4: SIMULADOR DE EXAMEN
+        function renderExamQuestion() {
+            const q = examQuestions[activeExamIndex];
+            document.getElementById('exam-tag').innerText = q.tag;
+            document.getElementById('exam-score-text').innerText = `Puntaje: ${examScore} / ${examAnsweredCount} Resueltas`;
+            document.getElementById('exam-vignette').innerText = q.vignette;
+            document.getElementById('exam-explanation-box').classList.add('hidden');
+            isExamAnswered = false;
+
+            const list = document.getElementById('exam-options-list');
+            list.innerHTML = q.options.map(opt => `
+                <button onclick="selectExamOption('${opt.key}')" class="w-full text-left p-3.5 bg-white border border-slate-200 hover:border-indigo-500 rounded-xl text-xs text-slate-800 font-medium transition flex items-center gap-3 shadow-sm">
+                    <span class="w-7 h-7 rounded-full bg-indigo-50 text-indigo-700 font-bold flex items-center justify-center text-xs flex-shrink-0">${opt.key}</span>
+                    <span class="flex-1">${opt.text}</span>
+                </button>
+            `).join('');
+        }
+
+        function selectExamOption(key) {
+            if (isExamAnswered) return;
+            isExamAnswered = true;
+
+            const q = examQuestions[activeExamIndex];
+            const selectedOpt = q.options.find(o => o.key === key);
+            examAnsweredCount++;
+
+            if (selectedOpt.correct) {
+                examScore++;
+                addXp(25);
+            }
+
+            const list = document.getElementById('exam-options-list');
+            list.innerHTML = q.options.map(opt => {
+                let style = 'bg-white border-slate-200';
+                if (opt.correct) style = 'bg-emerald-50 border-emerald-500 text-emerald-900 font-bold';
+                else if (opt.key === key && !opt.correct) style = 'bg-rose-50 border-rose-500 text-rose-900';
+
+                return `
+                    <div class="w-full p-3.5 border rounded-xl text-xs font-medium flex items-center gap-3 ${style}">
+                        <span class="w-7 h-7 rounded-full bg-white/80 font-bold flex items-center justify-center text-xs flex-shrink-0">${opt.key}</span>
+                        <span class="flex-1">${opt.text}</span>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('exam-explanation-text').innerText = q.explanation;
+            document.getElementById('exam-explanation-box').classList.remove('hidden');
+            document.getElementById('exam-score-text').innerText = `Puntaje: ${examScore} / ${examAnsweredCount} Resueltas`;
+        }
+
+        function nextExamQuestion() {
+            activeExamIndex = (activeExamIndex + 1) % examQuestions.length;
+            renderExamQuestion();
+        }
+    </script>
+</body>
+</html>
