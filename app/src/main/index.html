@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MedStudy Pro UCS - Morfofisiopatología Humana I</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    * {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    body {
+      background-color: #FEF7FF;
+      color: #1D1B20;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #F3EDF7;
+      border-radius: 8px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #D0BCFF;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen max-w-md mx-auto shadow-2xl bg-[#FEF7FF] relative pb-20">
+
+  <!-- TOP GAMIFICATION BAR -->
+  <header class="bg-gradient-to-r from-[#6750A4] via-[#7E57C2] to-[#8E24AA] text-white p-4 shadow-lg sticky top-0 z-30">
+    <div class="flex items-center justify-between mb-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur-md">
+          <i class="fa-solid font-bold fa-user-doctor text-[#D0BCFF] text-xl"></i>
+        </div>
+        <div>
+          <h1 class="font-extrabold text-base leading-tight">MedStudy Pro UCS</h1>
+          <p class="text-xs text-[#D0BCFF] font-medium">Morfofisiopatología Humana I • 2do Año</p>
+        </div>
+      </div>
+      <div class="bg-black/30 border border-white/20 rounded-2xl px-3 py-1.5 flex items-center gap-2 text-xs font-bold">
+        <span class="text-[#D0BCFF]">NIVEL <span id="userLevel">3</span></span>
+        <span class="text-amber-400">🔥 <span id="userStreak">5</span>d</span>
+      </div>
+    </div>
+
+    <!-- XP PROGRESS BAR -->
+    <div class="space-y-1">
+      <div class="flex justify-between items-center text-xs">
+        <span class="text-[#D0BCFF] font-semibold truncate max-w-[200px]" id="userRank">RANGO: Estudiante Destacado</span>
+        <span class="font-bold"><span id="userXp">60</span>/100 XP</span>
+      </div>
+      <div class="w-full bg-white/20 h-2 rounded-full overflow-hidden">
+        <div id="xpBar" class="bg-[#D0BCFF] h-full rounded-full transition-all duration-500" style="width: 60%;"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- PROFESSOR GÓMEZ BANNER -->
+  <section class="bg-[#F3EDF7] p-3 flex items-center gap-3 border-b border-[#CAC4D0]">
+    <div class="relative w-14 h-14 rounded-full border-2 border-[#6750A4] overflow-hidden flex-shrink-0 bg-purple-200">
+      <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150&auto=format&fit=crop&q=80" alt="Prof. Gómez" class="w-full h-full object-cover" />
+    </div>
+    <div class="bg-white p-3 rounded-2xl rounded-tl-sm shadow-sm border border-[#CAC4D0] flex-1 text-xs space-y-1">
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-[#6750A4]">Prof. Gómez (Docente UCS)</span>
+        <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
+      </div>
+      <p id="professorBubble" class="text-gray-700 leading-snug">
+        ¡Bienvenido, futuro médico comunitario! Explora la biblioteca o pon a prueba tus conocimientos en el simulador.
+      </p>
+    </div>
+  </section>
+
+  <!-- TAB NAVIGATION BAR -->
+  <nav class="flex bg-[#F3EDF7] border-b border-[#CAC4D0] text-xs font-bold text-gray-600 sticky top-[108px] z-20">
+    <button onclick="switchTab('library')" id="tab-library" class="flex-1 py-3 border-b-2 border-[#6750A4] text-[#6750A4] transition-colors flex justify-center items-center gap-1">
+      📚 <span>Biblioteca</span>
+    </button>
+    <button onclick="switchTab('socratic')" id="tab-socratic" class="flex-1 py-3 border-b-2 border-transparent hover:text-[#6750A4] transition-colors flex justify-center items-center gap-1">
+      💬 <span>Socrático</span>
+    </button>
+    <button onclick="switchTab('puzzle')" id="tab-puzzle" class="flex-1 py-3 border-b-2 border-transparent hover:text-[#6750A4] transition-colors flex justify-center items-center gap-1">
+      🧩 <span>Puzzle</span>
+    </button>
+    <button onclick="switchTab('exam')" id="tab-exam" class="flex-1 py-3 border-b-2 border-transparent hover:text-[#6750A4] transition-colors flex justify-center items-center gap-1">
+      📝 <span>Examen</span>
+    </button>
+  </nav>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="p-4 flex-1">
+
+    <!-- TAB 1: BIBLIOTECA -->
+    <div id="content-library" class="space-y-4">
+      <!-- HERO BANNER -->
+      <div class="relative rounded-3xl overflow-hidden shadow-md h-36 bg-gradient-to-r from-purple-900 to-indigo-900 text-white p-4 flex flex-col justify-end">
+        <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=600&auto=format&fit=crop&q=80" alt="Medical Background" class="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-overlay" />
+        <div class="relative z-10 space-y-1">
+          <h2 class="font-extrabold text-base">Portal de Estudio Morfofisiopatología</h2>
+          <p class="text-xs text-[#D0BCFF]">Universidad de las Ciencias de la Salud Hugo Chávez Frías</p>
+        </div>
+      </div>
+
+      <!-- UPLOAD GUIDES FORM -->
+      <div class="bg-white p-4 rounded-3xl border border-[#CAC4D0] shadow-sm space-y-3">
+        <div class="flex items-center gap-2 text-[#6750A4] font-bold text-sm">
+          <i class="fa-solid fa-file-arrow-up"></i>
+          <span>Cargar Guías de Estudio PNFMIC / UCS</span>
+        </div>
+        <p class="text-xs text-gray-600">Ingresa el título y resumen de tu guía. El Prof. Gómez las analizará y adaptará el tutor.</p>
+        <input id="guideTitle" type="text" placeholder="Título de la guía (ej. Resumen Lesión Celular)" class="w-full p-2.5 text-xs rounded-xl border border-gray-300 focus:outline-none focus:border-[#6750A4]" />
+        <textarea id="guideContent" placeholder="Contenido o notas de la guía..." class="w-full p-2.5 text-xs rounded-xl border border-gray-300 h-20 focus:outline-none focus:border-[#6750A4]"></textarea>
+        <button onclick="addCustomGuide()" class="w-full py-2.5 bg-[#6750A4] text-white font-bold text-xs rounded-xl shadow hover:bg-purple-800 transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-microscope"></i>
+          <span>Analizar con Prof. Gómez (+30 XP)</span>
+        </button>
+      </div>
+
+      <!-- MATERIALES OFICIALES -->
+      <div class="space-y-2">
+        <h3 class="text-xs font-extrabold text-gray-500 uppercase tracking-wider">Materiales Oficiales UCS</h3>
+        <div class="bg-[#D3E3FD] p-3 rounded-2xl border border-blue-200 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">🧬</span>
+            <div>
+              <p class="text-xs font-bold text-[#041E49]">Manual Introductorio Morfofisiopatología I</p>
+              <p class="text-[10px] text-gray-600">Sílaba Básica PNFMIC • Lesión y Muerte Celular</p>
+            </div>
+          </div>
+          <span class="bg-[#EADDFF] text-[#21005D] text-[10px] font-bold px-2 py-1 rounded-lg">Básico</span>
+        </div>
+        <div id="customGuidesContainer" class="space-y-2"></div>
+      </div>
+
+      <!-- NÚCLEOS TEMÁTICOS -->
+      <div class="space-y-2 pt-2">
+        <h3 class="text-xs font-extrabold text-gray-500 uppercase tracking-wider">Núcleos Temáticos de 2do Año</h3>
+        <div onclick="loadUcsModule('lesion_celular')" class="bg-white p-3.5 rounded-2xl border border-[#CAC4D0] flex items-center justify-between cursor-pointer hover:border-[#6750A4] transition">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">💀</span>
+            <div>
+              <p class="text-xs font-bold text-gray-900">Tema 1: Lesión y Muerte Celular</p>
+              <p class="text-[10px] text-gray-500">Mecanismos de tumefacción, esteatosis, necrosis y apoptosis.</p>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right text-[#6750A4] text-xs"></i>
+        </div>
+
+        <div onclick="loadUcsModule('genetica')" class="bg-white p-3.5 rounded-2xl border border-[#CAC4D0] flex items-center justify-between cursor-pointer hover:border-[#6750A4] transition">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">🧬</span>
+            <div>
+              <p class="text-xs font-bold text-gray-900">Tema 2: Genética Médica y Alteraciones</p>
+              <p class="text-[10px] text-gray-500">Cromosomopatías y aberraciones numéricas/estructurales.</p>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right text-[#6750A4] text-xs"></i>
+        </div>
+
+        <div onclick="loadUcsModule('hemodinamia')" class="bg-white p-3.5 rounded-2xl border border-[#CAC4D0] flex items-center justify-between cursor-pointer hover:border-[#6750A4] transition">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">🩸</span>
+            <div>
+              <p class="text-xs font-bold text-gray-900">Tema 3: Trastornos Hemodinámicos</p>
+              <p class="text-[10px] text-gray-500">Congestión pasiva, edema, trombosis, embolia e infarto.</p>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right text-[#6750A4] text-xs"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: CHAT SOCRÁTICO -->
+    <div id="content-socratic" class="hidden space-y-3 flex flex-col h-[500px]">
+      <div class="flex justify-between items-center">
+        <span class="text-xs font-bold text-gray-700">Tutor Socrático Activo</span>
+        <button onclick="resetSocraticChat()" class="text-xs text-[#6750A4] border border-[#6750A4] px-2 py-1 rounded-lg hover:bg-purple-50">
+          <i class="fa-solid fa-rotate-right"></i> Reiniciar
+        </button>
+      </div>
+
+      <!-- MESSAGES LIST -->
+      <div id="chatContainer" class="flex-1 bg-white p-3 rounded-2xl border border-[#CAC4D0] overflow-y-auto space-y-3 custom-scrollbar text-xs">
+        <!-- JS rendered messages -->
+      </div>
+
+      <!-- ARGUMENT OPTIONS -->
+      <div id="socraticOptions" class="space-y-1.5">
+        <!-- JS rendered options -->
+      </div>
+
+      <!-- CUSTOM QUESTION INPUT -->
+      <div class="flex gap-2">
+        <input id="userQuestionInput" type="text" placeholder="Haz una pregunta clínica al Prof. Gómez..." class="flex-1 p-2.5 text-xs rounded-xl border border-gray-300 focus:outline-none focus:border-[#6750A4]" />
+        <button onclick="askCustomQuestion()" class="w-10 h-10 bg-[#6750A4] text-white rounded-full flex items-center justify-center hover:bg-purple-800 transition">
+          <i class="fa-solid fa-paper-plane text-xs"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 3: ROMPECABEZAS -->
+    <div id="content-puzzle" class="hidden space-y-4">
+      <div class="bg-[#6750A4] text-white p-4 rounded-3xl space-y-1 shadow">
+        <h2 class="font-extrabold text-sm">Rompecabezas Morfo-Histológico</h2>
+        <p class="text-xs text-[#D0BCFF]">Relaciona cada alteración molecular u organela con su patología correspondiente. ¡Gana +20 XP por acierto!</p>
+      </div>
+
+      <div id="puzzleFeedback" class="bg-[#D3E3FD] p-3 rounded-2xl text-xs font-bold text-[#041E49] border border-blue-200">
+        Paso 1: Selecciona una organela o causa inicial en la columna izquierda.
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 text-xs">
+        <!-- Column 1: Organelles -->
+        <div class="space-y-2">
+          <p class="font-bold text-gray-500 uppercase text-[10px]">1. Organela / Causa</p>
+          <div id="organellesList" class="space-y-2"></div>
+        </div>
+        <!-- Column 2: Syndromes -->
+        <div class="space-y-2">
+          <p class="font-bold text-gray-500 uppercase text-[10px]">2. Síndrome / Patología</p>
+          <div id="syndromesList" class="space-y-2"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: SIMULADOR DE EXAMEN -->
+    <div id="content-exam" class="hidden space-y-4">
+      <div class="flex justify-between items-center text-xs">
+        <span id="examTag" class="bg-[#EADDFF] text-[#21005D] font-bold px-2.5 py-1 rounded-xl">Lesión Celular</span>
+        <span class="font-extrabold text-gray-700">Puntaje: <span id="examScore">0</span> / <span id="examTotal">0</span> Resueltas</span>
+      </div>
+
+      <div class="bg-white p-4 rounded-3xl border border-[#CAC4D0] shadow-sm space-y-2">
+        <span class="text-[10px] font-extrabold text-[#6750A4] uppercase tracking-wider">Caso Clínico Oficial UCS:</span>
+        <p id="examVignette" class="text-xs font-medium text-gray-800 leading-relaxed">
+          Cargando caso clínico...
+        </p>
+      </div>
+
+      <div id="examOptionsList" class="space-y-2 text-xs">
+        <!-- JS rendered options -->
+      </div>
+
+      <div id="examFeedbackCard" class="hidden bg-[#FAD8FD] p-4 rounded-3xl border border-pink-300 space-y-2">
+        <p class="text-xs font-extrabold text-[#35003B]">Crítica del Profesor Gómez:</p>
+        <p id="examFeedbackText" class="text-xs text-gray-800 leading-normal"></p>
+        <button onclick="nextExamQuestion()" class="w-full py-2.5 bg-[#6750A4] text-white font-bold text-xs rounded-xl shadow hover:bg-purple-800 transition">
+          Siguiente Caso Clínico ➔
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // APP STATE
+    const state = {
+      userLevel: 3,
+      userXp: 60,
+      userStreak: 5,
+      userRank: "Morfofisiopatólogo Aprendiz",
+      customGuides: [],
+      socraticIndex: 0,
+      selectedPuzzleOrganelle: null,
+      puzzleMatched: [],
+      examIndex: 0,
+      examScore: 0,
+      examAnsweredCount: 0,
+      isExamAnswered: false
+    };
+
+    // DATA: SOCRATIC DIALOGUES
+    const socraticDialogues = [
+      {
+        profMessage: "Paciente masculino de 54 años con antecedentes de isquemia miocárdica. La biopsia evidencia necrosis coagulativa. ¿Qué acontecimiento bioquímico irreversible marcó el punto de no retorno en este miocardiocito?",
+        options: [
+          { text: "A) Entrada masiva de Calcio (Ca2+) citosólico con desintegración de organelas.", correct: true, feedback: "¡Excelente razonamiento! La entrada masiva de calcio activa fosfolipasas y proteasas intracelulares, destruyendo la membrana." },
+          { text: "B) Disminución leve del pH por acumulación de glucógeno.", correct: false, feedback: "Incorrecto. La acidosis por glucólisis anaerobia causa condensación cromatínica inicial, pero la pérdida de homeostasis de Calcio es el punto crítico." },
+          { text: "C) Salida de potasio de la célula sin daño mitocondrial.", correct: false, feedback: "Incorrecto. El eflujo de potasio ocurre en cambios reversibles iniciales." }
+        ]
+      },
+      {
+        profMessage: "En la hepatitis viral aguda, observamos cuerpos de Councilman en el tejido hepático. ¿A qué tipo de muerte celular corresponde esta característica morfopatológica?",
+        options: [
+          { text: "A) Apoptosis hepatocitaria inducida por linfocitos T citotóxicos.", correct: true, feedback: "¡Exacto! Los cuerpos de Councilman representan hepatocitos apoptóticos encogidos con cromatina condensada." },
+          { text: "B) Necrosis de licuefacción por infección bacteriana secundaria.", correct: false, feedback: "Incorrecto. La necrosis licuefactiva es característica del encéfalo y abscesos purulentos." },
+          { text: "C) Necrosis caseosa por Mycobacterium tuberculosis.", correct: false, feedback: "Incorrecto. La necrosis caseosa se observa en granulomas tuberculosos." }
+        ]
+      }
+    ];
+
+    // DATA: PUZZLE ITEMS
+    const puzzleItems = [
+      { id: "1", icon: "⚡", organelle: "Pérdida de Bomba Na+/K+", organelleDesc: "Falla de ATP y tumefacción celular", syndrome: "Hidropesía Celular", syndromeDesc: "Edema celular reversible por entrada de H2O" },
+      { id: "2", icon: "🧬", organelle: "Mutación en Gen FBN1", organelleDesc: "Defecto en la proteína Fibrilina-1", syndrome: "Síndrome de Marfan", syndromeDesc: "Aracnodactilia y dilatación aórtica" },
+      { id: "3", icon: "🩸", organelle: "Estasis circulatoria venosa", organelleDesc: "Aumento de presión hidrostática capilar", syndrome: "Edema e Hiperemia Pasiva", syndromeDesc: "Hígado en nuez moscada y cianosis" }
+    ];
+
+    // DATA: EXAM QUESTIONS
+    const examQuestions = [
+      {
+        tag: "Lesión Celular",
+        vignette: "Femenina de 32 años presenta fiebre y dolor en hipocondrio derecho. La ecografía revela colecistitis aguda. La histología de la pared vesicular muestra infiltrado neutrofílico denso y licuefacción tisular localizada. ¿Cuál es el patrón de necrosis predominante?",
+        options: [
+          { key: "A", text: "Necrosis Licuefactiva con formación de pus.", isCorrect: true },
+          { key: "B", text: "Necrosis Coagulativa con conservación de la arquitectura.", isCorrect: false },
+          { key: "C", text: "Necrosis Grasa por digestión enzimática de lípidos.", isCorrect: false },
+          { key: "D", text: "Necrosis Fibrinoide por depósito de inmunocomplejos.", isCorrect: false }
+        ],
+        explanation: "La necrosis licuefactiva es típica de infecciones bacterianas agudas focalizadas debido a la acumulación de neutrófilos y liberación de enzimas hidrolíticas que digieren el tejido."
+      },
+      {
+        tag: "Genética Médica",
+        vignette: "Recién nacido masculino presenta llanto semejante al maullido de un gato, microcefalia, hipertelorismo y fisuras palpebrales inclinadas hacia abajo. Se sospecha una aberración cromosómica estructural. ¿Qué alteración cariotípica presenta?",
+        options: [
+          { key: "A", text: "Trisomía 21 (Síndrome de Down).", isCorrect: false },
+          { key: "B", text: "Deleción del brazo corto del cromosoma 5 (5p-).", isCorrect: true },
+          { key: "C", text: "Monosomía X (Síndrome de Turner).", isCorrect: false },
+          { key: "D", text: "Soma 47,XXY (Síndrome de Klinefelter).", isCorrect: false }
+        ],
+        explanation: "El síndrome de Cri du Chat (Maullido de Gato) es causado por la deleción parcial del brazo corto del cromosoma 5 (5p-)."
+      }
+    ];
+
+    // INITIALIZATION
+    window.onload = function() {
+      updateGamificationUI();
+      renderSocraticChat();
+      renderPuzzle();
+      renderExamQuestion();
+    };
+
+    // GAMIFICATION UPDATES
+    function addXp(amount) {
+      state.userXp += amount;
+      if (state.userXp >= 100) {
+        state.userXp -= 100;
+        state.userLevel += 1;
+        state.userRank = "Morfofisiopatólogo Experto";
+        alert(`¡FELICIDADES! Subiste al Nivel ${state.userLevel} 🎉`);
+      }
+      updateGamificationUI();
+    }
+
+    function updateGamificationUI() {
+      document.getElementById('userLevel').innerText = state.userLevel;
+      document.getElementById('userStreak').innerText = state.userStreak;
+      document.getElementById('userXp').innerText = state.userXp;
+      document.getElementById('userRank').innerText = "RANGO: " + state.userRank;
+      document.getElementById('xpBar').style.width = state.userXp + "%";
+    }
+
+    // TAB SWITCHING
+    function switchTab(tabName) {
+      const tabs = ['library', 'socratic', 'puzzle', 'exam'];
+      tabs.forEach(t => {
+        document.getElementById(`content-${t}`).classList.add('hidden');
+        const btn = document.getElementById(`tab-${t}`);
+        btn.classList.remove('border-[#6750A4]',
