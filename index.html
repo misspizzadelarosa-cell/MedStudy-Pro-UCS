@@ -91,7 +91,7 @@
                     <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 </div>
                 <p id="prof-bubble" class="text-xs text-slate-600 font-medium leading-relaxed">
-                    ¡Saludos futuro médico de la patria! He cargado el temario oficial de Morfofisiopatología Humana I (Semanas 1 a 12) y las Baterías de Exámenes UCS. Explora la biblioteca, resuelve retos socráticos o entrena en el simulador.
+                    ¡Saludos futuro médico de la patria! He cargado todos los Libros de Texto completos, los 12 Planes de Clase Oficiales con sus <strong>3 Palabras Clave</strong> por tema, y múltiples niveles de Rompecabezas.
                 </p>
             </div>
         </div>
@@ -101,13 +101,13 @@
     <nav class="bg-white border-b border-slate-200 sticky top-[68px] z-30 shadow-sm">
         <div class="max-w-5xl mx-auto flex overflow-x-auto text-sm font-semibold text-slate-500 no-scrollbar">
             <button onclick="switchTab('library')" id="tab-btn-library" class="px-5 py-3 flex items-center gap-2 whitespace-nowrap tab-active transition-colors">
-                <i class="fa-solid fa-book-bookmark text-indigo-600"></i> 📚 Biblioteca UCS
+                <i class="fa-solid fa-book-bookmark text-indigo-600"></i> 📚 Biblioteca & Libros
             </button>
             <button onclick="switchTab('socratic')" id="tab-btn-socratic" class="px-5 py-3 flex items-center gap-2 whitespace-nowrap hover:text-indigo-600 transition-colors">
                 <i class="fa-solid fa-comments text-indigo-600"></i> 💬 Diálogo Socrático
             </button>
             <button onclick="switchTab('puzzle')" id="tab-btn-puzzle" class="px-5 py-3 flex items-center gap-2 whitespace-nowrap hover:text-indigo-600 transition-colors">
-                <i class="fa-solid fa-puzzle-piece text-indigo-600"></i> 🧩 Rompecabezas
+                <i class="fa-solid fa-puzzle-piece text-indigo-600"></i> 🧩 Rompecabezas (4 Niveles)
             </button>
             <button onclick="switchTab('exam')" id="tab-btn-exam" class="px-5 py-3 flex items-center gap-2 whitespace-nowrap hover:text-indigo-600 transition-colors">
                 <i class="fa-solid fa-file-pen text-indigo-600"></i> 📝 Simulador Examen
@@ -123,25 +123,31 @@
             <!-- Hero Banner -->
             <div class="relative rounded-2xl overflow-hidden shadow-md bg-gradient-to-r from-slate-900 to-indigo-950 text-white p-6 md:p-8">
                 <div class="relative z-10 max-w-2xl">
-                    <span class="bg-indigo-500/30 text-indigo-300 text-xs font-extrabold uppercase tracking-wider px-3 py-1 rounded-full border border-indigo-400/30 mb-3 inline-block">Programa Oficial PNFMIC</span>
-                    <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight mb-2">Morfofisiopatología Humana I</h2>
+                    <span class="bg-indigo-500/30 text-indigo-300 text-xs font-extrabold uppercase tracking-wider px-3 py-1 rounded-full border border-indigo-400/30 mb-3 inline-block">Material de Estudio Completo • PNFMIC</span>
+                    <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight mb-2">Libros de Texto y Programa Oficial UCS</h2>
                     <p class="text-slate-300 text-sm leading-relaxed mb-4">
-                        Accede a los 12 Planes de Clase Oficiales, resúmenes del Robbins & Cotran 10ma Ed., Guías de la Dra. Araceli Lantigua, Software NEOPAT y tus documentos guardados.
+                        Todo el material de estudio detallado: Robbins & Cotran 10ma Ed., Dra. Araceli Lantigua, Rubin & Strayer, Guyton & Hall, Software NEOPAT y los 12 Planes de Clase con sus <strong>3 Palabras Clave</strong>.
                     </p>
                 </div>
             </div>
 
             <!-- Bookshelf Section -->
             <div>
-                <h3 class="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-3">Libros de Texto y Fuentes Oficiales (Toca para leer)</h3>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" id="bookshelf-grid">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-xs font-extrabold text-slate-500 uppercase tracking-wider">Libros de Texto Médicos Completos</h3>
+                    <span class="text-xs text-indigo-600 font-bold">5 Obras de Referencia</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id="bookshelf-grid">
                     <!-- Populated by JS -->
                 </div>
             </div>
 
             <!-- Class Plans Section -->
             <div>
-                <h3 class="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-3">Planes de Clase Oficiales UCS (Semanas 1 a 12)</h3>
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-xs font-extrabold text-slate-500 uppercase tracking-wider">Planes de Clase Oficiales UCS (Semanas 1 a 12)</h3>
+                    <span class="text-xs text-indigo-600 font-bold">Incluyen 3 Palabras Clave</span>
+                </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="class-plans-grid">
                     <!-- Populated by JS -->
                 </div>
@@ -149,14 +155,14 @@
 
             <!-- Custom Uploaded Documents -->
             <div>
-                <h3 class="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-3">Agregar / Guardar Nuevas Guías de Estudio</h3>
+                <h3 class="text-xs font-extrabold text-slate-500 uppercase tracking-wider mb-3">Mis Apuntes y Guías de Estudio Adicionales</h3>
                 <div class="glass-card p-5 rounded-2xl space-y-3">
                     <div class="flex items-center gap-2 text-indigo-700 font-bold">
-                        <i class="fa-solid fa-file-arrow-up"></i>
-                        <h4>Importar Apuntes o Guía Personal</h4>
+                        <i class="fa-solid fa-file-circle-plus"></i>
+                        <h4>Agregar / Guardar Nuevas Guías de Estudio</h4>
                     </div>
-                    <input type="text" id="custom-title-input" placeholder="Título del documento (ej. Resumen de Genética)" class="w-full px-4 py-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <textarea id="custom-content-input" rows="3" placeholder="Pega aquí el contenido de tus notas o resumen..." class="w-full px-4 py-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                    <input type="text" id="custom-title-input" placeholder="Título de la guía o capítulo (ej. Mi Resumen de Inflamación Granulomatosa)" class="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <textarea id="custom-content-input" rows="3" placeholder="Pega aquí todo el texto, resúmenes o conceptos que deseas estudiar..." class="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
                     <button onclick="saveCustomGuide()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl shadow transition-all flex items-center justify-center gap-2">
                         <i class="fa-solid fa-plus"></i> Guardar en Biblioteca Local (+30 XP)
                     </button>
@@ -199,11 +205,27 @@
             </div>
         </section>
 
-        <!-- TAB 3: ROMPECABEZAS -->
+        <!-- TAB 3: ROMPECABEZAS MULTI-NIVEL -->
         <section id="content-puzzle" class="hidden space-y-4">
             <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-5 rounded-2xl shadow">
-                <h3 class="text-lg font-extrabold mb-1">Rompecabezas Morfo-Histológico</h3>
-                <p class="text-xs text-indigo-100">Relaciona cada alteración molecular u organela con su síndrome o patología correspondiente. ¡Gana +20 XP por acierto!</p>
+                <h3 class="text-lg font-extrabold mb-1">Rompecabezas Histopatológico y Genético</h3>
+                <p class="text-xs text-indigo-100">Selecciona el nivel de estudio y relaciona cada alteración subcelular/mecanismo con su patología o síndrome correspondiente.</p>
+            </div>
+
+            <!-- Level Selector Buttons -->
+            <div class="flex flex-wrap gap-2">
+                <button onclick="setPuzzleLevel(1)" id="puzzle-lvl-btn-1" class="px-4 py-2 text-xs font-bold rounded-xl border transition bg-indigo-600 text-white border-indigo-600 shadow">
+                    Nivel 1: Adaptación y Lesión
+                </button>
+                <button onclick="setPuzzleLevel(2)" id="puzzle-lvl-btn-2" class="px-4 py-2 text-xs font-bold rounded-xl border transition bg-white text-slate-700 border-slate-300 hover:border-indigo-400">
+                    Nivel 2: Inflamación y Reparación
+                </button>
+                <button onclick="setPuzzleLevel(3)" id="puzzle-lvl-btn-3" class="px-4 py-2 text-xs font-bold rounded-xl border transition bg-white text-slate-700 border-slate-300 hover:border-indigo-400">
+                    Nivel 3: Genética y Citogenética
+                </button>
+                <button onclick="setPuzzleLevel(4)" id="puzzle-lvl-btn-4" class="px-4 py-2 text-xs font-bold rounded-xl border transition bg-white text-slate-700 border-slate-300 hover:border-indigo-400">
+                    Nivel 4: Patología Molecular
+                </button>
             </div>
 
             <div id="puzzle-feedback" class="bg-blue-50 border border-blue-200 text-blue-900 px-4 py-3 rounded-xl text-sm font-bold flex items-center gap-2">
@@ -213,7 +235,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- Left Column: Organelles / Causes -->
                 <div class="space-y-2">
-                    <h4 class="text-xs font-bold text-slate-400 uppercase">1. Causa / Alteración Subcelular</h4>
+                    <h4 class="text-xs font-bold text-slate-400 uppercase">1. Causa / Mecanismo Subcelular</h4>
                     <div id="puzzle-left-col" class="space-y-2">
                         <!-- Populated by JS -->
                     </div>
@@ -296,6 +318,7 @@
         let userLevel = 1;
         let userStreak = 1;
         let activeSocraticIndex = 0;
+        let activePuzzleLevel = 1;
         let selectedPuzzleOrganelleId = null;
         let matchedPuzzleIds = new Set();
         let activeExamIndex = 0;
@@ -311,7 +334,7 @@
             "Experto en Morfofisiopatología"
         ];
 
-        // Academic Books Preset
+        // Academic Textbooks
         const academicBooks = [
             {
                 id: 'robbins',
@@ -319,13 +342,15 @@
                 author: 'Patología Estructural y Funcional (10ma Ed.)',
                 tag: 'Pilar Fundamental',
                 color: 'from-rose-700 to-rose-900',
-                summary: 'El texto de referencia mundial para la anatomía patológica. Aborda la lesión celular, respuesta inflamatoria, reparación tisular, inmunopatología y genética.',
+                keywords: ['Etiología', 'Patogenia', 'Necrosis'],
+                summary: 'El texto de referencia mundial para la anatomía patológica. Aborda en profundidad la lesión celular, respuesta inflamatoria, reparación tisular, inmunopatología, neoplasias y enfermedades genéticas.',
                 highlights: [
                     'Capítulo 1: Lesión celular, necrosis (coagulativa, licuefactiva, caseosa, grasa) y apoptosis.',
-                    'Capítulo 2: Inflamación aguda y crónica, acontecimientos leucocitarios y mediadores químicos.',
-                    'Capítulo 3: Reparación tisular, regeneración y cicatrización por 1ra y 2da intención.'
+                    'Capítulo 2: Inflamación aguda y crónica, acontecimientos leucocitarios y mediadores químicos (histamina, citoquinas).',
+                    'Capítulo 3: Reparación tisular, regeneración y cicatrización por 1ra y 2da intención.',
+                    'Capítulo 5: Trastornos genéticos, enfermedades monogénicas y aberraciones cromosómicas.'
                 ],
-                tip: 'Recuerda diferenciar Necrosis Licuefactiva (infarto cerebral) de Necrosis Coagulativa (infarto de miocardio).'
+                tip: 'Diferencia siempre la Necrosis Licuefactiva (infarto cerebral) de la Necrosis Coagulativa (infarto de miocardio).'
             },
             {
                 id: 'lantigua',
@@ -333,13 +358,15 @@
                 author: 'Introducción a la Genética Médica',
                 tag: 'Genética UCS',
                 color: 'from-indigo-700 to-indigo-900',
-                summary: 'Obra insigne de la formación médica en el programa PNFMIC / UCS. Detalla herencia mendeliana, citogenética, aberraciones cromosómicas y Hardy-Weinberg.',
+                keywords: ['Pedigrí', 'Cromosomopatía', 'Impronta'],
+                summary: 'Obra insigne de la formación médica en el programa PNFMIC / UCS. Detalla herencia mendeliana, citogenética, aberraciones cromosómicas numéricas y estructurales, herencia no clásica y Ley de Hardy-Weinberg.',
                 highlights: [
-                    'Capítulo 5: Transmisión de simples mutaciones y genealogías.',
-                    'Capítulo 8: Aberraciones cromosómicas numéricas y estructurales.',
-                    'Capítulo 10: Herencia mitocondrial, impronta genómica (Angelman vs Prader-Willi).'
+                    'Capítulo 5: Transmisión de simples mutaciones y elaboración de árboles genealógicos.',
+                    'Capítulo 8: Aberraciones cromosómicas (Síndrome de Down, Turner, Klinefelter).',
+                    'Capítulo 10: Herencia mitocondrial, impronta genómica (Angelman vs Prader-Willi) y expansión de tripletes (Frágil X).',
+                    'Capítulo 12: Genética poblacional y cálculo de frecuencias génicas.'
                 ],
-                tip: 'Los Cuerpos de Barr equivalen al número de cromosomas X menos 1: (X - 1).'
+                tip: 'Cuerpos de Barr = (Número total de cromosomas X - 1). En Turner (45,X) = 0 Cuerpos de Barr; en Klinefelter (47,XXY) = 1.'
             },
             {
                 id: 'rubin',
@@ -347,13 +374,14 @@
                 author: 'Fundamentos Clinicopatológicos',
                 tag: 'Clínico-Morfológico',
                 color: 'from-amber-600 to-amber-800',
-                summary: 'Texto enfocado en la correlación anatomo-clínica. Explica fisiopatología del shock, trastornos hemodinámicos y cascada de citoquinas de fase aguda.',
+                keywords: ['Fisiopatología', 'Exudado', 'Virchow'],
+                summary: 'Texto enfocado en la correlación anatomo-clínica. Explica la fisiopatología del shock, trastornos hemodinámicos, edema inflamatorio vs no inflamatorio y cascada de citoquinas de fase aguda.',
                 highlights: [
-                    'Congestión pasiva hepática y pulmonar.',
-                    'Edema inflamatorio vs no inflamatorio (exudado vs trasudado).',
-                    'Triada de Virchow en la patogenia de trombos.'
+                    'Congestión pasiva crónica en hígado (aspecto en nuez moscada) y pulmones.',
+                    'Edema inflamatorio (exudado, alto contenido proteico) vs no inflamatorio (trasudado).',
+                    'Triada de Virchow: lesión endotelial, estasis sanguínea e hipercoagulabilidad en la trombosis.'
                 ],
-                tip: 'Atención a la cascada de citoquinas IL-1, TNF y su efecto en el centro termorregulador hipotalámico (fiebre).'
+                tip: 'Atención a las citoquinas pirógenas IL-1 y TNF que actúan en el centro termorregulador hipotalámico induciendo fiebre.'
             },
             {
                 id: 'neopat',
@@ -361,81 +389,109 @@
                 author: 'Diagnóstico Histopatológico UCS',
                 tag: 'Láminas Prácticas',
                 color: 'from-emerald-600 to-emerald-800',
-                summary: 'Colección de láminas e imágenes histopatológicas de las clases prácticas de Morfofisiopatología I en la UCS.',
+                keywords: ['Histopatología', 'Langhans', 'Granuloma'],
+                summary: 'Colección de láminas e imágenes histopatológicas de las clases prácticas de Morfofisiopatología I en la UCS. Incluye preparaciones de necropsias y biopsias de laboratorio.',
                 highlights: [
-                    'Lámina de Necrosis Caseosa Tuberculosa con células de Langhans.',
-                    'Lámina de Esteatosis Hepática con vacuolas lipídicas.',
-                    'Lámina de Glomeruloesclerosis Nodular de Kimmelstiel-Wilson.'
+                    'Lámina de Necrosis Caseosa Tuberculosa con células de Langhans y halo de linfocitos.',
+                    'Lámina de Esteatosis Hepática con vacuolas lipídicas en hepatocitos.',
+                    'Lámina de Glomeruloesclerosis Nodular de Kimmelstiel-Wilson en nefropatía diabética.'
                 ],
-                tip: 'En la inflamación granulomatosa, busca siempre las células gigantes multinucleadas tipo Langhans.'
+                tip: 'En la inflamación granulomatosa, identifica la célula gigante multinucleada tipo Langhans con núcleos dispuestos en herradura.'
+            },
+            {
+                id: 'guyton',
+                title: 'Guyton & Hall',
+                author: 'Tratado de Fisiología Médica (14ta Ed.)',
+                tag: 'Fisiopatología',
+                color: 'from-teal-700 to-teal-900',
+                keywords: ['Homeostasis', 'Isquemia', 'Perfusión'],
+                summary: 'Texto de referencia en fisiología y bases homeostáticas. Detalla los mecanismos de regulación hemodinámica, equilibrio hidroelectrolítico y perfusión celular en estados patológicos.',
+                highlights: [
+                    'Regulación de la presión arterial e isquemia tisular.',
+                    'Transporte de membrana y bomba de Na+/K+ ATPasa.',
+                    'Bases fisiológicas de la respuesta inmune y permeabilidad capilar.'
+                ],
+                tip: 'Comprender el fallo de la bomba de sodio y potasio por falta de ATP es la clave para entender la tumefacción celular hipóxica.'
             }
         ];
 
-        // 12 UCS Class Plans
+        // 12 UCS Class Plans (With 3 Keywords for each)
         const classPlans = [
             {
                 id: 'sem1', week: 1, title: 'Procesos Patológicos y Métodos de Estudio',
-                summary: 'Etiología, patogenia, cambios morfológicos, fisiopatología, semiología y patocronía.',
-                content: 'La Morfofisiopatología Humana estudia las alteraciones estructurales y funcionales frente a la agresión. Se dividen en genéticos y adquiridos.'
+                keywords: ['Etiología', 'Patogenia', 'Morfología'],
+                summary: 'Definición de proceso patológico, clasificación etiológica (Genéticos vs Adquiridos) y métodos de estudio.',
+                content: 'La Morfofisiopatología Humana estudia las alteraciones estructurales y funcionales frente a agresores endógenos y exógenos. Núcleo constitutivo: Etiología (causa), Patogenia (mecanismos moleculares), Cambios Morfológicos (macro y microscópicos) y Fisiopatología (alteraciones funcionales y clínica).'
             },
             {
                 id: 'sem2', week: 2, title: 'Métodos de Estudio y Muestras Biológicas',
-                summary: 'Tipos de muestras biológicas, requisitos de toma, biopsias y principios bioéticos.',
-                content: 'Requisitos de ayuno y conservación de muestras. Biopsias: incisional, excisional, PAAF, por congelación y extendido citológico.'
+                keywords: ['Muestra', 'Biopsia', 'Bioética'],
+                summary: 'Tipos de muestras biológicas, conservación, biopsias, necropsias y consentimiento informado.',
+                content: 'Muestras biológicas: sangre, orina, LCR, líquidos de cavidades, tejidos. Requisitos de ayuno y cadena de custodia. Biopsias: incisional (muestra parcial), excisional (extirpación completa), PAAF (citología por aspiración), por congelación (conducta quirúrgica inmediata). Consentimiento informado y bioética médica.'
             },
             {
                 id: 'sem3', week: 3, title: 'Adaptación Celular y Lesión Hipóxica',
-                summary: 'Atrofia, Hipertrofia, Hiperplasia, Metaplasia y daño por hipoxia.',
-                content: 'Mecanismos de la hipoxia: fallo de la bomba Na+/K+ ATPasa, glucólisis anaeróbica, caída del pH e hinchazón celular.'
+                keywords: ['Atrofia', 'Metaplasia', 'Hipoxia'],
+                summary: 'Atrofia, Hipertrofia, Hiperplasia, Metaplasia y fisiopatología de la lesión celular hipóxica.',
+                content: 'Respuestas adaptativas reversibles: Atrofia (disminución de tamaño/células), Hipertrofia (aumento de tamaño celular), Hiperplasia (aumento de número de células), Metaplasia (sustitución de un epitelio adulto por otro más resistente). Mecanismo de hipoxia: falta de O2 -> caída de fosforilación oxidativa -> fallo bomba Na+/K+ -> entrada de agua y tumefacción celular.'
             },
             {
                 id: 'sem4', week: 4, title: 'Lesión Reversible, Necrosis y Apoptosis',
-                summary: 'Tumefacción, Esteatosis, Necrosis (Coagulativa, Licuefactiva, Caseosa, Grasa) y Apoptosis.',
-                content: 'Necrosis por coagulación (infarto miocárdico). Necrosis licuefactiva (infarto cerebral). Apoptosis mediada por caspasas y Bcl-2.'
+                keywords: ['Necrosis', 'Apoptosis', 'Caspasas'],
+                summary: 'Tumefacción, Esteatosis, 4 patrones de Necrosis (Coagulativa, Licuefactiva, Caseosa, Grasa) y Apoptosis.',
+                content: 'Lesión Reversible: tumefacción celular y cambio graso. Necrosis: muerte celular no programada con inflamación secundara; Coagulativa (corazón, riñón), Licuefactiva (cerebro, abscesos), Caseosa (tuberculosis), Grasa (pancreatitis). Apoptosis: muerte celular programada mediada por caspasas, Bcl-2 y p53 sin respuesta inflamatoria.'
             },
             {
-                id: 'sem5', week: 5, title: 'Acumulaciones, Aterosclerosis y Diabetes Mellitus',
-                summary: 'Placa de ateroma, microangiopatía diabética, Kimmelstiel-Wilson, Calcificaciones.',
-                content: 'Glomeruloesclerosis de Kimmelstiel-Wilson en riñón diabético. Calcificación distrófica (tejido muerto) vs metastásica (hipercalcemia).'
+                id: 'sem5', week: 5, title: 'Acumulaciones, Aterosclerosis y Diabetes',
+                keywords: ['Ateroma', 'Kimmelstiel', 'Calcificación'],
+                summary: 'Placa de ateroma, microangiopatía diabética, Kimmelstiel-Wilson, Calcificación Distrófica vs Metastásica.',
+                content: 'Acumulaciones: esteatosis, colesterol, pigmentos (lipofuscina, hemosiderina). Aterosclerosis: lesión de la íntima por acumulo de lípidos y células espumosas. Diabetes Mellitus: glomerulopatía nodular de Kimmelstiel-Wilson patognomónica. Calcificación distrófica (ocurre en tejido necrótico con calcio sérico normal) vs metastásica (en tejido sano por hipercalcemia).'
             },
             {
                 id: 'sem6', week: 6, title: 'Respuesta Inflamatoria Aguda y Crónica',
-                summary: 'Fenómenos leucocitarios, histamina, exudado, granulomas y reactantes de fase aguda.',
-                content: 'Pasos: Marginación -> Rodamiento -> Adhesión -> Migración -> Quimiotaxis -> Fagocitosis. Células epitelioides en granulomas.'
+                keywords: ['Exudado', 'Histamina', 'Granuloma'],
+                summary: 'Acontecimientos leucocitarios, histamina, exudado vs trasudado, inflamación granulomatosa.',
+                content: 'Respuesta inflamatoria aguda: vasodilatación (histamina), aumento de permeabilidad, exudado. Etapas leucocitarias: Marginación -> Rodamiento -> Adhesión -> Migración -> Quimiotaxis -> Fagocitosis. Inflamación crónica: infiltrado mononuclear (linfocitos, macrófagos) e inflamación granulomatosa con células epitelioides y gigantes tipo Langhans.'
             },
             {
                 id: 'sem7', week: 7, title: 'Reparación Tisular y Cicatrización',
-                summary: 'Células lábiles, estables y permanentes. Tejido de granulación, TGF-β, VEGF.',
-                content: 'Cicatrización por 1ra intención (cirugía limpia) vs 2da intención (gran pérdida de tejido con contracción por miofibroblastos).'
+                keywords: ['Granulación', 'TGF-Beta', 'Cicatriz'],
+                summary: 'Células lábiles, estables y permanentes. Tejido de granulación, angiogénesis (VEGF), 1ra y 2da intención.',
+                content: 'Regeneración (reemplazo por células idénticas) vs Cicatrización (depósito de colágeno/fibrosis). Células lábiles (epitelio), estables (hepatocitos) y permanentes (neuronas, cardiomiocitos). Tejido de granulación: neovasculatura (VEGF), fibroblastos estimulados por TGF-β y edema. Cicatrización por 1ra intención (herida quirúrgica limpia) vs 2da intención (gran pérdida tisular).'
             },
             {
                 id: 'sem8', week: 8, title: 'Transmisión de Simples Mutaciones',
-                summary: 'Herencia autosómica dominante, recesiva, ligada al X. Penetrancia y pleiotropía.',
-                content: 'En herencia recesiva ligada al X, el padre enfermo transmite el alelo al 100% de sus hijas (portadoras).'
+                keywords: ['Mendel', 'Pedigrí', 'Consanguinidad'],
+                summary: 'Herencia autosómica dominante, recesiva y ligada al X. Penetrancia reducida y expresividad variable.',
+                content: 'Enfermedades monogénicas mendelianas: Autosómica Dominante (vertical, afecta a ambos sexos), Autosómica Recesiva (horizontal, asociada a consanguinidad), Recesiva ligada al X (madres portadoras transmiten a 50% de sus hijos varones; varón enfermo transmite alelo al 100% de sus hijas). Penetrancia y pleiotropía.'
             },
             {
                 id: 'sem9', week: 9, title: 'Interferencias Biológicas y Bases Bioquímicas',
-                summary: 'Herencia mitocondrial, impronta genómica (Angelman vs Prader-Willi), Frágil X.',
-                content: 'Transmisión mitocondrial exclusivamente materna. Deleción 15q11-13 materna = Angelman, paterna = Prader-Willi.'
+                keywords: ['Mitocondrial', 'Impronta', 'Tripletes'],
+                summary: 'Herencia mitocondrial, impronta genómica (Angelman vs Prader-Willi), Síndrome Frágil X.',
+                content: 'Herencia no clásica: Transmisión mitocondrial exclusivamente materna (hombres enfermos NUNCA transmiten la enfermedad a sus hijos). Impronta genómica en 15q11-13: deleción materna = Síndrome de Angelman; deleción paterna = Síndrome de Prader-Willi. Mutaciones dinámicas por expansión de tripletes CGG (Síndrome Frágil X).'
             },
             {
                 id: 'sem10', week: 10, title: 'Aberraciones Cromosómicas',
-                summary: 'Aneuploidías (Down, Patau, Edwards, Turner 45,X, Klinefelter 47,XXY) y Cuerpos de Barr.',
-                content: 'Número de Cuerpos de Barr = (X - 1). En Turner (45,X) hay 0 Cuerpos de Barr. En Klinefelter (47,XXY) hay 1.'
+                keywords: ['Aneuploidía', 'Down', 'Barr'],
+                summary: 'Trisomías (21 Down, 13 Patau, 18 Edwards), Turner (45,X), Klinefelter (47,XXY) y Cuerpos de Barr.',
+                content: 'Aberraciones numéricas producidas por no disyunción meiótica materna. Trisomía 21 (Down). Monosomía X (Turner 45,X: baja talla, cuello palmeado, 0 Cuerpos de Barr). Klinefelter (47,XXY: ginecomastia, atrofia testicular, 1 Cuerpo de Barr). Regla de Cuerpos de Barr = (Total de X - 1).'
             },
             {
                 id: 'sem11', week: 11, title: 'Marcadores Genéticos y Genética Poblacional',
+                keywords: ['Sistema ABO', 'HLA', 'Hardy-Weinberg'],
                 summary: 'Sistemas ABO, Rh, HLA y Ley de Hardy-Weinberg (p + q = 1, p² + 2pq + q² = 1).',
-                content: 'Padres AO y BO pueden engendrar un hijo OO (Grupo O). Principios de Hardy-Weinberg en poblaciones en equilibrio.'
+                content: 'Marcadores genéticos codominantes ABO y Rh. HLA en inmunogenética y trasplantes. Genética poblacional: Ley de Hardy-Weinberg en poblaciones en equilibrio (ausencia de mutación, selección o migración; matrimonios al azar). Cálculo de heterocigotos (2pq) y homocigotos (p², q²).'
             },
             {
                 id: 'sem12', week: 12, title: 'Herencia Multifactorial y Asesoramiento Genético',
-                summary: 'Malformación, Deformación, Disrupción, Displasia y Diagnóstico Prenatal.',
-                content: 'Malformación = defecto primario intrínseco. Disrupción = ruptura secundaria por brida amniótica. Deformación = fuerza mecánica.'
+                keywords: ['Multifactorial', 'Malformación', 'Asesoramiento'],
+                summary: 'Malformación, Deformación, Disrupción, Displasia y Diagnóstico Prenatal no directivo.',
+                content: 'Herencia multifactorial: interacción de múltiples genes con factores ambientales (HTA, Diabetes, Labio Leporino). Defectos congénitos: Malformación (defecto intrínseco primario), Disrupción (ruptura secundaria por bridas amnióticas), Deformación (fuerza mecánica anómala). Asesoramiento genético no directivo.'
             }
         ];
 
-        // Socratic Dialogues Preset
+        // Socratic Dialogues
         const socraticDialogues = [
             {
                 id: 'd1',
@@ -450,7 +506,7 @@
             {
                 id: 'd2',
                 topicTitle: 'Tema 5: Citogenética y Cuerpos de Barr',
-                prompt: 'Un recien nacido presenta baja talla, cuello palmeado e hidrops fetal. La prueba de la cromatina sexual revela CERO (0) Cuerpos de Barr. Basándote en la regla de Cuerpos de Barr = (X - 1) de la Dra. Lantigua, ¿cuál es el diagnóstico?',
+                prompt: 'Un recién nacido presenta baja talla, cuello palmeado e hidrops fetal. La prueba de la cromatina sexual revela CERO (0) Cuerpos de Barr. Basándote en la regla de Cuerpos de Barr = (X - 1) de la Dra. Lantigua, ¿cuál es el diagnóstico?',
                 options: [
                     { text: 'Síndrome de Turner (Fórmula 45,X).', correct: true, response: '¡Excelente! Al poseer 1 solo cromosoma X, (1 - 1) = 0 Cuerpos de Barr. +25 XP', xp: 25 },
                     { text: 'Síndrome de Klinefelter (Fórmula 47,XXY).', correct: false, response: 'En Klinefelter hay 2 X, por ende tendría (2 - 1) = 1 Cuerpo de Barr. +10 XP', xp: 10 }
@@ -458,15 +514,35 @@
             }
         ];
 
-        // Pathology Puzzle Preset
-        const puzzleItems = [
-            { id: 'p1', icon: '⚡', orgTitle: 'Fallo bomba Na+/K+', orgDesc: 'Aumento de sodio y agua celular', synTitle: 'Tumefacción Celular', synDesc: 'Lesión reversible en túbulos renales' },
-            { id: 'p2', icon: '🫀', orgTitle: 'Isquemia Miocárdica', orgDesc: 'Desnaturalización proteica >12h', synTitle: 'Necrosis Coagulativa', synDesc: 'Lápida sepulcral en cardiomiocitos' },
-            { id: 'p3', icon: '🧠', orgTitle: 'Autólisis en SNC', orgDesc: 'Digestión enzimática lisosómica', synTitle: 'Necrosis Licuefactiva', synDesc: 'Cavidad quística en infarto cerebral' },
-            { id: 'p4', icon: '🧫', orgTitle: 'Granuloma Tuberculoso', orgDesc: 'Células epitelioides y Langhans', synTitle: 'Necrosis Caseosa', synDesc: 'Aspecto blanquecino tipo queso' }
-        ];
+        // MULTIPLE PUZZLE LEVELS
+        const puzzleLevels = {
+            1: [ // Nivel 1: Adaptación y Lesión Celular
+                { id: 'p1_1', icon: '⚡', orgTitle: 'Fallo bomba Na+/K+', orgDesc: 'Aumento de sodio y agua celular', synTitle: 'Tumefacción Celular', synDesc: 'Lesión reversible en túbulos renales' },
+                { id: 'p1_2', icon: '🫀', orgTitle: 'Isquemia Miocárdica', orgDesc: 'Desnaturalización proteica >12h', synTitle: 'Necrosis Coagulativa', synDesc: 'Lápida sepulcral en cardiomiocitos' },
+                { id: 'p1_3', icon: '🧠', orgTitle: 'Autólisis en SNC', orgDesc: 'Digestión enzimática lisosómica', synTitle: 'Necrosis Licuefactiva', synDesc: 'Cavidad quística en infarto cerebral' },
+                { id: 'p1_4', icon: '🧫', orgTitle: 'Granuloma Tuberculoso', orgDesc: 'Células epitelioides y Langhans', synTitle: 'Necrosis Caseosa', synDesc: 'Aspecto blanquecino tipo queso' }
+            ],
+            2: [ // Nivel 2: Inflamación y Reparación
+                { id: 'p2_1', icon: '💉', orgTitle: 'Liberación de Histamina', orgDesc: 'Vasodilatación y permeabilidad vascular', synTitle: 'Exudado Inflamatorio Agudo', synDesc: 'Rico en neutrófilos PMN' },
+                { id: 'p2_2', icon: '🦠', orgTitle: 'Persistencia de Micobacterias', orgDesc: 'Infiltrado mononuclear crónico', synTitle: 'Inflamación Granulomatosa', synDesc: 'Células gigantes multinucleadas' },
+                { id: 'p2_3', icon: '🩸', orgTitle: 'Estimulación por VEGF', orgDesc: 'Brote de neovasculatura y edema', synTitle: 'Tejido de Granulación', synDesc: 'Paso clave en la cicatrización' },
+                { id: 'p2_4', icon: '📐', orgTitle: 'Acción de Miofibroblastos', orgDesc: 'Fuerza contráctil en heridas grandes', synTitle: 'Cicatrización por 2da Intención', synDesc: 'Reducción del tamaño del defecto' }
+            ],
+            3: [ // Nivel 3: Genética y Citogenética
+                { id: 'p3_1', icon: '🧬', orgTitle: 'No Disyunción Meiótica M-I', orgDesc: 'Copia extra del cromosoma 21', synTitle: 'Síndrome de Down (47,XX+21)', synDesc: 'Fisuras palpebrales y pliegue palmar' },
+                { id: 'p3_2', icon: '🌸', orgTitle: 'Cariotipo 45,X (Monosomía X)', orgDesc: '0 Cuerpos de Barr (1 - 1 = 0)', synTitle: 'Síndrome de Turner', synDesc: 'Baja talla, cuello palmeado, disgenesia' },
+                { id: 'p3_3', icon: '👔', orgTitle: 'Cariotipo 47,XXY', orgDesc: '1 Cuerpo de Barr (2 - 1 = 1)', synTitle: 'Síndrome de Klinefelter', synDesc: 'Atrofia testicular y ginecomastia' },
+                { id: 'p3_4', icon: '🧬', orgTitle: 'Deleción Materna 15q11-13', orgDesc: 'Ausencia de expresión de alelo materno', synTitle: 'Síndrome de Angelman', synDesc: 'Ataxia, risa inapropiada e impronta' }
+            ],
+            4: [ // Nivel 4: Patología Molecular
+                { id: 'p4_1', icon: '🩸', orgTitle: 'Efecto Aditivo Poligénico + Dieta', orgDesc: 'Interacción génica con el ambiente', synTitle: 'Herencia Multifactorial', synDesc: 'Hipertensión arterial y Diabetes II' },
+                { id: 'p4_2', icon: '🎀', orgTitle: 'Ruptura Secundaria por Brida', orgDesc: 'Compresión e isquemia fetal', synTitle: 'Disrupción Congénita', synDesc: 'Amputación de miembro en desarrollo' },
+                { id: 'p4_3', icon: '🧩', orgTitle: 'Fuerza Mecánica por Oligohidramnios', orgDesc: 'Compresión sobre extremidades', synTitle: 'Deformación Congénita', synDesc: 'Pie zambo / equinovaro secundario' },
+                { id: 'p4_4', icon: '🔬', orgTitle: 'Padres AO y BO', orgDesc: 'Codominancia y alelos recesivos', synTitle: 'Hijo con Grupo Sanguíneo O (OO)', synDesc: '25% de probabilidad genotípica' }
+            ]
+        };
 
-        // Exam Questions Preset (From UCS Official Exams)
+        // Exam Questions
         const examQuestions = [
             {
                 tag: 'Batería Oficial 2024 - Pregunta I',
@@ -541,26 +617,34 @@
             document.getElementById(`tab-btn-${tab}`).classList.add('tab-active');
 
             const bubbles = {
-                library: 'Biblioteca UCS: Toca cualquier libro o plan de clase oficial para abrir el lector interactivo de Morfofisiopatología.',
+                library: 'Biblioteca & Libros completos: Lee detalladamente cada obra y repasa las 3 Palabras Clave de cada tema para un aprendizaje sólido.',
                 socratic: 'Método Socrático: Responde a mis preguntas de razonamiento clínico para acumular XP y desbloquear niveles.',
-                puzzle: 'Rompecabezas: Vincula cada causa subcelular con su respectivo cuadro histopatológico.',
+                puzzle: 'Rompecabezas Multi-Nivel: Selecciona entre los 4 niveles de estudio y vincula cada causa con su patología.',
                 exam: 'Simulador de Examen: Preguntas de casos clínicos de las Baterías Oficiales de la UCS.'
             };
-            document.getElementById('prof-bubble').innerText = bubbles[tab];
+            document.getElementById('prof-bubble').innerHTML = bubbles[tab];
         }
 
         // TAB 1: BIBLIOTECA
         function renderBookshelf() {
             const container = document.getElementById('bookshelf-grid');
             container.innerHTML = academicBooks.map(b => `
-                <div onclick="openBookModal('${b.id}')" class="bg-gradient-to-b ${b.color} text-white p-4 rounded-2xl shadow-md cursor-pointer hover:scale-105 transition duration-200 flex flex-col justify-between h-48">
+                <div onclick="openBookModal('${b.id}')" class="bg-gradient-to-b ${b.color} text-white p-4.5 rounded-2xl shadow-md cursor-pointer hover:scale-105 transition duration-200 flex flex-col justify-between h-56 border border-white/10">
                     <div>
-                        <span class="bg-white/20 text-white text-[10px] font-extrabold uppercase px-2 py-0.5 rounded">${b.tag}</span>
-                        <h4 class="font-extrabold text-sm mt-2 leading-tight">${b.title}</h4>
-                        <p class="text-[11px] text-white/80 mt-1 line-clamp-2">${b.author}</p>
+                        <div class="flex items-center justify-between">
+                            <span class="bg-white/20 text-white text-[10px] font-extrabold uppercase px-2 py-0.5 rounded">${b.tag}</span>
+                            <span class="text-xs">📖</span>
+                        </div>
+                        <h4 class="font-extrabold text-base mt-2 leading-tight">${b.title}</h4>
+                        <p class="text-xs text-white/80 mt-0.5 font-medium line-clamp-1">${b.author}</p>
+                        
+                        <!-- 3 Keywords Badge -->
+                        <div class="mt-2.5 bg-black/30 backdrop-blur-sm rounded-lg p-1.5 flex flex-wrap gap-1 text-[10px] font-bold text-amber-300 border border-white/10">
+                            ${b.keywords.map(k => `<span>#${k}</span>`).join(' • ')}
+                        </div>
                     </div>
-                    <button class="w-full py-1 bg-white text-slate-900 font-bold text-xs rounded-xl shadow hover:bg-slate-100 transition">
-                        📖 Leer Resumen
+                    <button class="w-full py-1.5 bg-white text-slate-900 font-bold text-xs rounded-xl shadow hover:bg-slate-100 transition mt-2">
+                        📖 Leer Texto Completo
                     </button>
                 </div>
             `).join('');
@@ -569,16 +653,28 @@
         function renderClassPlans() {
             const container = document.getElementById('class-plans-grid');
             container.innerHTML = classPlans.map(p => `
-                <div onclick="openClassPlanModal('${p.id}')" class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm hover:border-indigo-400 hover:shadow transition cursor-pointer flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-700 flex flex-col items-center justify-center font-extrabold flex-shrink-0">
-                        <span class="text-[9px] uppercase">Sem</span>
-                        <span class="text-base leading-none">${p.week}</span>
+                <div onclick="openClassPlanModal('${p.id}')" class="bg-white border border-slate-200 p-4.5 rounded-2xl shadow-sm hover:border-indigo-400 hover:shadow transition cursor-pointer flex flex-col justify-between gap-3">
+                    <div class="flex items-start gap-3">
+                        <div class="w-11 h-11 rounded-xl bg-indigo-100 text-indigo-700 flex flex-col items-center justify-center font-extrabold flex-shrink-0 border border-indigo-200">
+                            <span class="text-[9px] uppercase">Sem</span>
+                            <span class="text-sm leading-none">${p.week}</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-extrabold text-sm text-slate-800 leading-snug">${p.title}</h4>
+                            <p class="text-xs text-slate-500 line-clamp-2 mt-1 font-medium">${p.summary}</p>
+                        </div>
                     </div>
-                    <div class="flex-1 min-w-0">
-                        <h4 class="font-extrabold text-sm text-slate-800 truncate">${p.title}</h4>
-                        <p class="text-xs text-slate-500 line-clamp-2 mt-0.5">${p.summary}</p>
+
+                    <!-- 3 Palabras Clave Section -->
+                    <div class="flex items-center justify-between border-t border-slate-100 pt-2.5 mt-1 text-xs">
+                        <div class="flex items-center gap-1 text-indigo-600 font-bold text-[11px]">
+                            <span>🔑 3 Claves:</span>
+                            <span class="text-slate-700 font-semibold">${p.keywords.join(' • ')}</span>
+                        </div>
+                        <span class="text-indigo-600 font-bold text-xs flex items-center gap-1">
+                            Leer <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                        </span>
                     </div>
-                    <i class="fa-solid fa-chevron-right text-indigo-500"></i>
                 </div>
             `).join('');
         }
@@ -612,11 +708,11 @@
 
             container.innerHTML = customGuides.map(g => `
                 <div class="bg-blue-50 border border-blue-200 p-3 rounded-xl flex items-center justify-between gap-3">
-                    <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="flex items-center gap-2.5 min-w-0 cursor-pointer" onclick="openCustomGuideModal('${g.id}')">
                         <i class="fa-solid fa-file-lines text-blue-600"></i>
                         <span class="text-xs font-bold text-blue-900 truncate">${g.title}</span>
                     </div>
-                    <button onclick="deleteCustomGuide('${g.id}')" class="text-xs text-rose-600 hover:text-rose-800 font-bold">
+                    <button onclick="deleteCustomGuide('${g.id}')" class="text-xs text-rose-600 hover:text-rose-800 font-bold p-1">
                         <i class="fa-solid fa-trash"></i>
                     </button>
                 </div>
@@ -634,16 +730,20 @@
             const book = academicBooks.find(b => b.id === bookId);
             if (!book) return;
 
-            document.getElementById('modal-tag').innerText = book.tag;
+            document.getElementById('modal-tag').innerText = `${book.tag} • Texto de Estudio`;
             document.getElementById('modal-title').innerText = `${book.title} - ${book.author}`;
             document.getElementById('modal-body').innerHTML = `
+                <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl text-amber-900 font-bold text-xs flex items-center gap-2 mb-3">
+                    <span>🔑 3 Palabras Clave:</span>
+                    <span class="bg-amber-200/80 px-2 py-0.5 rounded text-amber-950 font-extrabold">${book.keywords.join(' • ')}</span>
+                </div>
                 <div class="bg-indigo-50 border border-indigo-200 p-4 rounded-xl text-indigo-900 font-medium text-xs mb-3">
                     💡 <strong>Consejo del Prof. Gómez:</strong> ${book.tip}
                 </div>
-                <h4 class="font-bold text-slate-900 text-sm">Resumen de la Obra:</h4>
-                <p>${book.summary}</p>
-                <h4 class="font-bold text-slate-900 text-sm pt-2">Núcleos Temáticos Clave:</h4>
-                <ul class="list-disc pl-5 space-y-1">
+                <h4 class="font-bold text-slate-900 text-sm">Resumen Completo del Texto:</h4>
+                <p class="leading-relaxed">${book.summary}</p>
+                <h4 class="font-bold text-slate-900 text-sm pt-2">Capítulos y Contenidos Clave:</h4>
+                <ul class="list-disc pl-5 space-y-1.5">
                     ${book.highlights.map(h => `<li>${h}</li>`).join('')}
                 </ul>
             `;
@@ -658,6 +758,10 @@
             document.getElementById('modal-tag').innerText = `Semana ${plan.week} • Plan de Clase UCS`;
             document.getElementById('modal-title').innerText = plan.title;
             document.getElementById('modal-body').innerHTML = `
+                <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl text-amber-900 font-bold text-xs flex items-center gap-2 mb-3">
+                    <span>🔑 3 Palabras Clave del Tema:</span>
+                    <span class="bg-amber-200/80 px-2 py-0.5 rounded text-amber-950 font-extrabold">${plan.keywords.join(' • ')}</span>
+                </div>
                 <div class="bg-purple-50 border border-purple-200 p-4 rounded-xl text-purple-900 font-medium text-xs mb-3">
                     📚 <strong>Sumario de la Clase:</strong> ${plan.summary}
                 </div>
@@ -671,6 +775,20 @@
             `;
             document.getElementById('reader-modal').classList.remove('hidden');
             addXp(15);
+        }
+
+        function openCustomGuideModal(id) {
+            const guide = customGuides.find(g => g.id === id);
+            if (!guide) return;
+
+            document.getElementById('modal-tag').innerText = 'Apunte Personal Local';
+            document.getElementById('modal-title').innerText = guide.title;
+            document.getElementById('modal-body').innerHTML = `
+                <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-sm leading-relaxed whitespace-pre-wrap font-medium">
+                    ${guide.content}
+                </div>
+            `;
+            document.getElementById('reader-modal').classList.remove('hidden');
         }
 
         function closeReaderModal() {
@@ -763,7 +881,7 @@
                     <div class="flex items-start gap-2.5">
                         <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">👨‍🔬</div>
                         <div class="bg-indigo-50 border border-indigo-100 p-3 rounded-2xl rounded-tl-none max-w-[85%] text-xs text-slate-800 leading-relaxed font-medium">
-                            Excelente pregunta sobre Morfofisiopatología. Recuerda que ante '${query}', debes revisar la etiología molecular en el Robbins y la correlación con los reactantes de fase aguda en el laboratorio. ¡Ganas +15 XP por tu iniciativa de estudio!
+                            Excelente pregunta de Morfofisiopatología. Sobre '${query}', te recomiendo revisar el capítulo correspondiente en el Robbins o en las notas de la Dra. Lantigua. ¡Sumas +15 XP por tu constante espíritu de estudio!
                         </div>
                     </div>
                 `;
@@ -777,31 +895,51 @@
             renderSocraticChat();
         }
 
-        // TAB 3: PUZZLE
+        // TAB 3: PUZZLE MULTI-NIVEL
+        function setPuzzleLevel(lvl) {
+            activePuzzleLevel = lvl;
+            selectedPuzzleOrganelleId = null;
+            matchedPuzzleIds.clear();
+
+            // Update Level Buttons styling
+            for (let i = 1; i <= 4; i++) {
+                const btn = document.getElementById(`puzzle-lvl-btn-${i}`);
+                if (i === lvl) {
+                    btn.className = "px-4 py-2 text-xs font-bold rounded-xl border transition bg-indigo-600 text-white border-indigo-600 shadow";
+                } else {
+                    btn.className = "px-4 py-2 text-xs font-bold rounded-xl border transition bg-white text-slate-700 border-slate-300 hover:border-indigo-400";
+                }
+            }
+
+            document.getElementById('puzzle-feedback').innerHTML = `<i class="fa-solid fa-layer-group text-indigo-600"></i> Nivel ${lvl} activado. Selecciona una causa a la izquierda y su patología a la derecha.`;
+            renderPuzzle();
+        }
+
         function renderPuzzle() {
+            const currentItems = puzzleLevels[activePuzzleLevel] || puzzleLevels[1];
             const leftCol = document.getElementById('puzzle-left-col');
             const rightCol = document.getElementById('puzzle-right-col');
 
-            leftCol.innerHTML = puzzleItems.map(item => {
+            leftCol.innerHTML = currentItems.map(item => {
                 const isMatched = matchedPuzzleIds.has(item.id);
                 const isSelected = selectedPuzzleOrganelleId === item.id;
                 return `
-                    <div onclick="selectPuzzleOrganelle('${item.id}')" class="p-3 rounded-xl border text-xs cursor-pointer transition ${isMatched ? 'bg-emerald-50 border-emerald-300 text-emerald-900 pointer-events-none' : isSelected ? 'bg-indigo-100 border-indigo-500 font-bold' : 'bg-white border-slate-200 hover:border-indigo-400'} flex items-center gap-2.5">
+                    <div onclick="selectPuzzleOrganelle('${item.id}')" class="p-3 rounded-xl border text-xs cursor-pointer transition ${isMatched ? 'bg-emerald-50 border-emerald-300 text-emerald-900 pointer-events-none' : isSelected ? 'bg-indigo-100 border-indigo-500 font-bold shadow' : 'bg-white border-slate-200 hover:border-indigo-400'} flex items-center gap-2.5">
                         <span class="text-base">${item.icon}</span>
                         <div>
                             <div class="font-bold">${item.orgTitle}</div>
-                            <div class="text-[10px] text-slate-500">${item.orgDesc}</div>
+                            <div class="text-[10px] text-slate-500 font-medium">${item.orgDesc}</div>
                         </div>
                     </div>
                 `;
             }).join('');
 
-            rightCol.innerHTML = puzzleItems.map(item => {
+            rightCol.innerHTML = currentItems.map(item => {
                 const isMatched = matchedPuzzleIds.has(item.id);
                 return `
                     <div onclick="selectPuzzleSyndrome('${item.id}')" class="p-3 rounded-xl border text-xs cursor-pointer transition ${isMatched ? 'bg-emerald-50 border-emerald-300 text-emerald-900 pointer-events-none' : 'bg-white border-slate-200 hover:border-indigo-400'}">
                         <div class="font-bold text-indigo-700">${item.synTitle}</div>
-                        <div class="text-[10px] text-slate-500">${item.synDesc}</div>
+                        <div class="text-[10px] text-slate-500 font-medium">${item.synDesc}</div>
                     </div>
                 `;
             }).join('');
@@ -815,6 +953,7 @@
         }
 
         function selectPuzzleSyndrome(id) {
+            const currentItems = puzzleLevels[activePuzzleLevel] || puzzleLevels[1];
             if (!selectedPuzzleOrganelleId) {
                 document.getElementById('puzzle-feedback').innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-600"></i> ¡Primero selecciona un elemento de la izquierda!`;
                 return;
@@ -826,8 +965,8 @@
                 document.getElementById('puzzle-feedback').innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600"></i> ¡Asociación correcta! +20 XP de Morfofisiopatología.`;
                 addXp(20);
 
-                if (matchedPuzzleIds.size === puzzleItems.length) {
-                    document.getElementById('puzzle-feedback').innerHTML = `🎉 ¡Rompecabezas completado con éxito! Has demostrado perfecto dominio de las organelas y síndromes.`;
+                if (matchedPuzzleIds.size === currentItems.length) {
+                    document.getElementById('puzzle-feedback').innerHTML = `🎉 ¡Rompecabezas del Nivel ${activePuzzleLevel} completado con éxito! +50 XP Adicionales.`;
                     addXp(50);
                 }
             } else {
