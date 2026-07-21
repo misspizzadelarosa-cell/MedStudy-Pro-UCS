@@ -1,0 +1,6 @@
+{
+  "name": "MedStudy Pro UCS",
+  "description": "Portal de estudio interactivo de Morfofisiopatología Humana I para estudiantes de medicina de la Universidad de las Ciencias de la Salud Hugo Chávez Frías.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,61 @@
+package com.example.ui.models
+
+data class SocraticOption(
+    val text: String,
+    val response: String,
+    val isCorrect: Boolean = false,
+    val xpReward: Int = 10
+)
+
+data class SocraticDialogue(
+    val id: String,
+    val profPrompt: String,
+    val options: List<SocraticOption>
+)
+
+data class ExamOption(
+    val key: String,
+    val text: String,
+    val isCorrect: Boolean = false
+)
+
+data class ExamQuestion(
+    val id: String,
+    val tag: String,
+    val vignette: String,
+    val options: List<ExamOption>,
+    val explanation: String
+)
+
+data class AcademicBook(
+    val id: String,
+    val title: String,
+    val author: String,
+    val category: String,
+    val tag: String,
+    val colorStartHex: Long,
+    val colorEndHex: Long,
+    val profTip: String
+)
+
+data class PuzzleItem(
+    val id: String,
+    val organelleTitle: String,
+    val organelleDesc: String,
+    val syndromeTitle: String,
+    val syndromeDesc: String,
+    val icon: String
+)
+
+enum class ChatSender {
+    PROFESSOR,
+    STUDENT
+}
+
+data class ChatMessage(
+    val id: String,
+    val sender: ChatSender,
+    val text: String,
+    val isAiGenerated: Boolean = false,
+    val timestamp: Long = System.currentTimeMillis()
+)
