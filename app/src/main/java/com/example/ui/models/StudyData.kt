@@ -28,6 +28,22 @@ data class ExamQuestion(
     val explanation: String
 )
 
+data class ConceptDetail(
+    val term: String,
+    val definition: String,
+    val clinicalRelevance: String,
+    val ucsExamImportance: String
+)
+
+data class VideoExplanation(
+    val videoTitle: String,
+    val youtubeId: String,
+    val channelOrAuthor: String,
+    val duration: String,
+    val keyTopicsInVideo: List<String>,
+    val aiVideoSummary: String
+)
+
 data class AcademicBook(
     val id: String,
     val title: String,
@@ -38,7 +54,10 @@ data class AcademicBook(
     val colorEndHex: Long,
     val summary: String,
     val keyHighlights: List<String>,
-    val profTip: String
+    val profTip: String,
+    val fullChapterContent: String = "",
+    val allKeyConcepts: List<ConceptDetail> = emptyList(),
+    val videoExplanation: VideoExplanation? = null
 )
 
 data class UcsClassPlan(
@@ -54,7 +73,10 @@ data class UcsClassPlan(
     val morphologicalFeatures: String,
     val diagnosticEvidence: String,
     val conclusions: List<String>,
-    val examTips: String
+    val examTips: String,
+    val keywords: List<String> = emptyList(),
+    val allKeyConcepts: List<ConceptDetail> = emptyList(),
+    val videoExplanation: VideoExplanation? = null
 )
 
 data class PuzzleItem(

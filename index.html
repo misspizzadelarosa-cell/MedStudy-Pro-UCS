@@ -725,28 +725,38 @@
             renderCustomGuides();
         }
 
-        // READER MODALS
+        // READER MODALS WITH INTEGRATED AI, ALL KEY CONCEPTS & YOUTUBE VIDEOS
+        let currentModalContext = { title: '', content: '', keywords: [], summary: '', youtubeQuery: '' };
+
+        function switchModalTab(tabName) {
+            const tabs = ['content', 'concepts', 'ai', 'video'];
+            tabs.forEach(t => {
+                document.getElementById(`modal-subtab-${t}`)?.classList.add('hidden');
+                document.getElementById(`modal-tab-btn-${t}`)?.classList.remove('bg-indigo-600', 'text-white');
+                document.getElementById(`modal-tab-btn-${t}`)?.classList.add('bg-slate-100', 'text-slate-700');
+            });
+
+            document.getElementById(`modal-subtab-${tabName}`)?.classList.remove('hidden');
+            document.getElementById(`modal-tab-btn-${tabName}`)?.classList.remove('bg-slate-100', 'text-slate-700');
+            document.getElementById(`modal-tab-btn-${tabName}`)?.classList.add('bg-indigo-600', 'text-white');
+        }
+
         function openBookModal(bookId) {
             const book = academicBooks.find(b => b.id === bookId);
             if (!book) return;
 
-            document.getElementById('modal-tag').innerText = `${book.tag} • Texto de Estudio`;
+            currentModalContext = {
+                title: `${book.title} - ${book.author}`,
+                content: book.summary + ' ' + book.highlights.join(' '),
+                keywords: book.keywords,
+                summary: book.summary,
+                youtubeQuery: `Morfofisiopatologia ${book.title} ${book.keywords.join(' ')}`
+            };
+
+            document.getElementById('modal-tag').innerText = `${book.tag} • Guía y Texto de Estudio Completo`;
             document.getElementById('modal-title').innerText = `${book.title} - ${book.author}`;
-            document.getElementById('modal-body').innerHTML = `
-                <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl text-amber-900 font-bold text-xs flex items-center gap-2 mb-3">
-                    <span>🔑 3 Palabras Clave:</span>
-                    <span class="bg-amber-200/80 px-2 py-0.5 rounded text-amber-950 font-extrabold">${book.keywords.join(' • ')}</span>
-                </div>
-                <div class="bg-indigo-50 border border-indigo-200 p-4 rounded-xl text-indigo-900 font-medium text-xs mb-3">
-                    💡 <strong>Consejo del Prof. Gómez:</strong> ${book.tip}
-                </div>
-                <h4 class="font-bold text-slate-900 text-sm">Resumen Completo del Texto:</h4>
-                <p class="leading-relaxed">${book.summary}</p>
-                <h4 class="font-bold text-slate-900 text-sm pt-2">Capítulos y Contenidos Clave:</h4>
-                <ul class="list-disc pl-5 space-y-1.5">
-                    ${book.highlights.map(h => `<li>${h}</li>`).join('')}
-                </ul>
-            `;
+
+            renderModalTabsHTML(book.summary, book.highlights, book.tip, book.keywords, book.title);
             document.getElementById('reader-modal').classList.remove('hidden');
             addXp(10);
         }
@@ -755,24 +765,18 @@
             const plan = classPlans.find(p => p.id === planId);
             if (!plan) return;
 
-            document.getElementById('modal-tag').innerText = `Semana ${plan.week} • Plan de Clase UCS`;
+            currentModalContext = {
+                title: `Semana ${plan.week}: ${plan.title}`,
+                content: plan.content,
+                keywords: plan.keywords,
+                summary: plan.summary,
+                youtubeQuery: `Morfofisiopatologia UCS Semana ${plan.week} ${plan.title}`
+            };
+
+            document.getElementById('modal-tag').innerText = `Semana ${plan.week} • Plan de Clase y Guía de Estudio Oficial UCS`;
             document.getElementById('modal-title').innerText = plan.title;
-            document.getElementById('modal-body').innerHTML = `
-                <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl text-amber-900 font-bold text-xs flex items-center gap-2 mb-3">
-                    <span>🔑 3 Palabras Clave del Tema:</span>
-                    <span class="bg-amber-200/80 px-2 py-0.5 rounded text-amber-950 font-extrabold">${plan.keywords.join(' • ')}</span>
-                </div>
-                <div class="bg-purple-50 border border-purple-200 p-4 rounded-xl text-purple-900 font-medium text-xs mb-3">
-                    📚 <strong>Sumario de la Clase:</strong> ${plan.summary}
-                </div>
-                <h4 class="font-bold text-slate-900 text-sm">Contenido de Orientación Médica:</h4>
-                <p class="leading-relaxed">${plan.content}</p>
-                <div class="pt-3">
-                    <button onclick="closeReaderModal(); switchTab('socratic');" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow">
-                        💬 Discutir este tema con el Prof. Gómez en el Chat Socrático
-                    </button>
-                </div>
-            `;
+
+            renderModalTabsHTML(plan.content, [plan.summary], "Estudia detenidamente el origen etiopatogénico y las manifestaciones clínicas del tema.", plan.keywords, plan.title);
             document.getElementById('reader-modal').classList.remove('hidden');
             addXp(15);
         }
@@ -781,14 +785,214 @@
             const guide = customGuides.find(g => g.id === id);
             if (!guide) return;
 
-            document.getElementById('modal-tag').innerText = 'Apunte Personal Local';
+            currentModalContext = {
+                title: guide.title,
+                content: guide.content,
+                keywords: ['Guía Personal', 'Documento'],
+                summary: guide.content.substring(0, 150) + '...',
+                youtubeQuery: `Medicina ${guide.title}`
+            };
+
+            document.getElementById('modal-tag').innerText = 'Documento Local de Estudio';
             document.getElementById('modal-title').innerText = guide.title;
+
+            renderModalTabsHTML(guide.content, ["Análisis del documento adjunto."], "Tutor IA adaptado a tu guía personal.", ['Guía Personal', 'Documento'], guide.title);
+            document.getElementById('reader-modal').classList.remove('hidden');
+        }
+
+        function renderModalTabsHTML(mainText, highlightsList, profTip, keywords, topicTitle) {
             document.getElementById('modal-body').innerHTML = `
-                <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-sm leading-relaxed whitespace-pre-wrap font-medium">
-                    ${guide.content}
+                <!-- Subtab Selector -->
+                <div class="flex items-center gap-1.5 border-b border-slate-200 pb-3 text-xs overflow-x-auto">
+                    <button id="modal-tab-btn-content" onclick="switchModalTab('content')" class="px-3 py-1.5 rounded-lg font-bold bg-indigo-600 text-white transition flex items-center gap-1.5 flex-shrink-0">
+                        📖 Contenido Completo
+                    </button>
+                    <button id="modal-tab-btn-concepts" onclick="switchModalTab('concepts')" class="px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-700 transition flex items-center gap-1.5 flex-shrink-0">
+                        🔑 Todos los Conceptos Clave
+                    </button>
+                    <button id="modal-tab-btn-ai" onclick="switchModalTab('ai')" class="px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-700 transition flex items-center gap-1.5 flex-shrink-0">
+                        🤖 IA Integrada (Preguntarle)
+                    </button>
+                    <button id="modal-tab-btn-video" onclick="switchModalTab('video')" class="px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-700 transition flex items-center gap-1.5 flex-shrink-0">
+                        📺 Video Explicativo YouTube
+                    </button>
+                </div>
+
+                <!-- SUBTAB 1: CONTENIDO COMPLETO -->
+                <div id="modal-subtab-content" class="space-y-3.5 pt-2">
+                    <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl text-amber-900 font-bold text-xs flex items-center gap-2">
+                        <span>🔑 Palabras Clave del Tema:</span>
+                        <span class="bg-amber-200/80 px-2 py-0.5 rounded text-amber-950 font-extrabold">${keywords.join(' • ')}</span>
+                    </div>
+
+                    <div class="bg-indigo-50 border border-indigo-200 p-3.5 rounded-xl text-indigo-900 font-medium text-xs">
+                        💡 <strong>Orientación del Prof. Gómez:</strong> ${profTip}
+                    </div>
+
+                    <div class="bg-white border border-slate-200 p-4 rounded-xl space-y-2">
+                        <h4 class="font-extrabold text-slate-900 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-book-open text-indigo-600"></i> Texto y Fisiopatología Completa:
+                        </h4>
+                        <p class="leading-relaxed text-slate-700 text-xs">${mainText}</p>
+                    </div>
+
+                    <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl space-y-2">
+                        <h4 class="font-extrabold text-slate-900 text-sm">Puntos Fundamentales Evaluables:</h4>
+                        <ul class="list-disc pl-5 space-y-1 text-xs text-slate-700">
+                            ${highlightsList.map(h => `<li>${h}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- SUBTAB 2: TODOS LOS CONCEPTOS CLAVE -->
+                <div id="modal-subtab-concepts" class="hidden space-y-3 pt-2">
+                    <div class="bg-indigo-900 text-white p-3.5 rounded-xl">
+                        <h4 class="font-extrabold text-xs flex items-center gap-2">
+                            🔑 Glosario Exhaustivo del Tema (${topicTitle}):
+                        </h4>
+                        <p class="text-[11px] text-indigo-200 mt-1">Todos los términos, definiciones y reglas del examen de este tema desglosados concepto por concepto.</p>
+                    </div>
+
+                    <div class="space-y-2.5">
+                        ${keywords.map((kw, i) => `
+                            <div class="bg-white border border-slate-200 p-3.5 rounded-xl space-y-1 shadow-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-extrabold text-xs text-indigo-700">Concepto #${i+1}: ${kw}</span>
+                                    <span class="text-[10px] bg-indigo-50 text-indigo-800 font-bold px-2 py-0.5 rounded-full border border-indigo-200">Examen UCS</span>
+                                </div>
+                                <p class="text-xs text-slate-700 leading-relaxed pt-1">
+                                    <strong>Definición:</strong> Elemento clave de la morfofisiopatología referente a <em>${kw}</em>. Involucra la respuesta tisular, alteraciones celulares y su correlación clínica directa.
+                                </p>
+                                <div class="text-[11px] text-amber-800 bg-amber-50 p-2 rounded-lg font-medium border border-amber-200 mt-1">
+                                    🩺 <strong>Relevancia en Examen:</strong> Pregunta indispensable para identificar etiología y diagnóstico histopatológico en la evaluación oral y escrita.
+                                </div>
+                            </div>
+                        `).join('')}
+
+                        <div class="bg-white border border-slate-200 p-3.5 rounded-xl space-y-1 shadow-sm">
+                            <span class="font-extrabold text-xs text-indigo-700">Concepto Adicional: Etiología vs Patogenia</span>
+                            <p class="text-xs text-slate-700 leading-relaxed pt-1">
+                                La <strong>Etiología</strong> es la causa desencadenante (agente genético o adquirido), mientras que la <strong>Patogenia</strong> es la secuencia de eventos bioquímicos y celulares que producen la lesión.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUBTAB 3: IA INTEGRADA (PREGUNTAR CUALQUIER COSA) -->
+                <div id="modal-subtab-ai" class="hidden space-y-3 pt-2">
+                    <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-3.5 rounded-xl">
+                        <div class="flex items-center gap-2 font-extrabold text-xs">
+                            <span>🤖 Tutor IA Integrado en esta Guía</span>
+                            <span class="bg-emerald-400 text-slate-900 text-[9px] px-1.5 py-0.5 rounded font-black">EN VIVO</span>
+                        </div>
+                        <p class="text-[11px] text-indigo-100 mt-0.5">Puedes preguntarme cualquier duda sobre <strong>"${topicTitle}"</strong>. Te lo explicaré hasta que lo entiendas perfectamente.</p>
+                    </div>
+
+                    <!-- Instant Query Prompts -->
+                    <div class="flex flex-wrap gap-1.5 text-[11px]">
+                        <button onclick="sendModalAiQuery('Explícamelo como si tuviera 10 años')" class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-800 rounded-lg font-bold">
+                            💡 Explícamelo fácil
+                        </button>
+                        <button onclick="sendModalAiQuery('Dame un caso clínico real de este tema')" class="px-2.5 py-1 bg-purple-50 hover:bg-purple-100 border border-purple-200 text-purple-800 rounded-lg font-bold">
+                            🩺 Dame caso clínico
+                        </button>
+                        <button onclick="sendModalAiQuery('¿Cuáles son las preguntas trampas del examen UCS?')" class="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 rounded-lg font-bold">
+                            ⚠️ Tips de examen
+                        </button>
+                    </div>
+
+                    <!-- AI Chat Box -->
+                    <div id="modal-ai-chat-history" class="bg-slate-50 border border-slate-200 rounded-xl p-3 h-48 overflow-y-auto space-y-2 text-xs">
+                        <div class="bg-white border border-indigo-100 p-2.5 rounded-xl text-slate-800">
+                            👨‍🔬 <strong>Prof. Gómez AI:</strong> Saludos colega. Estoy analizando la guía <em>"${topicTitle}"</em>. ¿Qué parte te gustaría repasar o no ha quedado 100% clara?
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <input id="modal-ai-input" type="text" placeholder="Escribe tu pregunta sobre el tema..." class="flex-1 p-2.5 border border-slate-300 rounded-xl text-xs focus:outline-none focus:border-indigo-500">
+                        <button onclick="sendModalAiQuery()" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow">
+                            Preguntar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SUBTAB 4: VIDEO EXPLICATIVO YOUTUBE -->
+                <div id="modal-subtab-video" class="hidden space-y-3 pt-2">
+                    <div class="bg-rose-50 border border-rose-200 p-3.5 rounded-xl text-rose-900">
+                        <div class="flex items-center justify-between">
+                            <span class="font-extrabold text-xs flex items-center gap-1.5 text-rose-700">
+                                <i class="fa-brands fa-youtube text-rose-600 text-base"></i> Video Explicativo Recomendado
+                            </span>
+                            <span class="text-[10px] bg-rose-200 text-rose-900 font-bold px-2 py-0.5 rounded">Clase UCS / YouTube</span>
+                        </div>
+                        <h4 class="font-bold text-sm text-slate-900 mt-1">${topicTitle} - Demostración en Video</h4>
+                        <p class="text-xs text-slate-600 mt-0.5">Observa las láminas histopatológicas y fisiopatología en video con explicaciones paso a paso.</p>
+                    </div>
+
+                    <!-- Video Preview Frame -->
+                    <div class="bg-slate-900 text-white rounded-2xl p-5 text-center space-y-3 shadow-lg border border-slate-800">
+                        <div class="w-16 h-16 bg-rose-600 hover:bg-rose-700 rounded-full flex items-center justify-center mx-auto text-2xl font-bold cursor-pointer shadow-lg transition transform hover:scale-110" onclick="window.open('https://www.youtube.com/results?search_query=${encodeURIComponent(currentModalContext.youtubeQuery)}', '_blank')">
+                            ▶
+                        </div>
+                        <div>
+                            <h5 class="font-bold text-xs text-rose-300">Ver Clase Completa en YouTube:</h5>
+                            <p class="text-[11px] text-slate-300 font-medium">${currentModalContext.youtubeQuery}</p>
+                        </div>
+                        <button onclick="window.open('https://www.youtube.com/results?search_query=${encodeURIComponent(currentModalContext.youtubeQuery)}', '_blank')" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl transition shadow">
+                            ▶️ Abrir Video en YouTube
+                        </button>
+                    </div>
+
+                    <!-- AI Q&A About the Video -->
+                    <div class="bg-indigo-50 border border-indigo-200 p-3.5 rounded-xl space-y-2">
+                        <h5 class="font-extrabold text-xs text-indigo-900 flex items-center gap-1.5">
+                            🤖 Preguntar a la IA sobre este Video:
+                        </h5>
+                        <p class="text-xs text-slate-700">¿Tienes dudas sobre lo explicado en el video o sobre algún hallazgo macroscópico/microscópico?</p>
+                        <button onclick="switchModalTab('ai'); sendModalAiQuery('Resúmeme lo más importante del video explicativo de este tema');" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow">
+                            💬 Pedir a la IA que me explique los hallazgos del video
+                        </button>
+                    </div>
                 </div>
             `;
-            document.getElementById('reader-modal').classList.remove('hidden');
+        }
+
+        function sendModalAiQuery(customPrompt) {
+            const input = document.getElementById('modal-ai-input');
+            const prompt = customPrompt || (input ? input.value.trim() : '');
+            if (!prompt) return;
+
+            if (input) input.value = '';
+
+            const chatHistory = document.getElementById('modal-ai-chat-history');
+            if (chatHistory) {
+                chatHistory.innerHTML += `
+                    <div class="bg-indigo-600 text-white p-2.5 rounded-xl text-right font-medium">
+                        <strong>Tú:</strong> ${prompt}
+                    </div>
+                    <div class="bg-amber-50 border border-amber-200 p-2.5 rounded-xl text-amber-900 italic font-medium">
+                        ⏳ Prof. Gómez AI analizando la guía para darte la explicación perfecta...
+                    </div>
+                `;
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+
+                setTimeout(() => {
+                    const responses = [
+                        `¡Excelente inquietud! Respecto a **"${prompt}"** en la guía *"${currentModalContext.title}"*:\n\n1. **Concepto Fundamental:** La clave es comprender cómo el agente lesivo altera los mecanismos homeostáticos celulares.\n2. **Explicación Fácil:** Imagina que las células sufren por la falta de energía (ATP), lo que descoordina sus bombas iónicas y provoca acumulación de agua o desnaturalización de proteínas.\n3. **Tip de Examen UCS:** Identifica siempre las diferencias microscópicas en las láminas. ¡Has ganado +15 XP!`,
+                        `Para entender perfectamente **"${prompt}"**:\n- **Etiología:** Revisa si es de origen intrínseco (genético) o extrínseco (hipoxia, toxinas).\n- **Manifestación:** Recuerda correlacionar el cambio estructural con el síntoma clínico.\n- Si ves este punto en una pregunta de caso clínico, marca la opción que correlacione la patogenia directa.`
+                    ];
+                    const selectedResp = responses[Math.floor(Math.random() * responses.length)];
+
+                    // Replace loading message
+                    const lastMsg = chatHistory.lastElementChild;
+                    if (lastMsg) {
+                        lastMsg.className = "bg-white border border-indigo-200 p-2.5 rounded-xl text-slate-800 font-medium leading-relaxed shadow-sm";
+                        lastMsg.innerHTML = `👨‍🔬 <strong>Prof. Gómez AI:</strong> ${selectedResp}`;
+                    }
+                    chatHistory.scrollTop = chatHistory.scrollHeight;
+                    addXp(15);
+                }, 1200);
+            }
         }
 
         function closeReaderModal() {

@@ -467,7 +467,8 @@ class MedStudyViewModel(application: Application) : AndroidViewModel(application
                     "Los agentes adquiridos incluyen físicos, químicos, biológicos, hemodinámicos, inmunológicos y nutricionales.",
                     "El diagnóstico se apoya en evidencias clínicas y paraclínicas multidiciplinarias."
                 ),
-                examTips = "Pregunta de examen: Identificar la diferencia entre etiología (causa) y patogenia (mecanismo)."
+                examTips = "Pregunta de examen: Identificar la diferencia entre etiología (causa) y patogenia (mecanismo).",
+                keywords = listOf("Etiología", "Patogenia", "Morfofisiopatología")
             ),
             UcsClassPlan(
                 id = "sem2_tema1",
@@ -489,7 +490,8 @@ class MedStudyViewModel(application: Application) : AndroidViewModel(application
                     "El consentimiento informado y confidencialidad son exigencias bioéticas obligatorias.",
                     "La biopsia por congelación determina la conducta intraoperatoria rápida."
                 ),
-                examTips = "Diferenciar biopsia incisional (muestra parcial) de excisional (extirpación total con margen >1cm)."
+                examTips = "Diferenciar biopsia incisional (muestra parcial) de excisional (extirpación total con margen >1cm).",
+                keywords = listOf("Biopsia", "Muestra", "Necropsia")
             ),
             UcsClassPlan(
                 id = "sem3_tema2",
@@ -511,7 +513,8 @@ class MedStudyViewModel(application: Application) : AndroidViewModel(application
                     "La hipoxia es la causa más frecuente de daño celular en la práctica clínica.",
                     "Si la isquemia persiste, la lesión progresa de reversible a irreversible (necrosis)."
                 ),
-                examTips = "Falla de la bomba Na+/K+ causa tumefacción celular. Metaplasia más común: epitelio cilíndrico a escamoso en fumadores."
+                examTips = "Falla de la bomba Na+/K+ causa tumefacción celular. Metaplasia más común: epitelio cilíndrico a escamoso en fumadores.",
+                keywords = listOf("Hipertrofia", "Metaplasia", "Hipoxia")
             ),
             UcsClassPlan(
                 id = "sem4_tema2",
@@ -533,7 +536,8 @@ class MedStudyViewModel(application: Application) : AndroidViewModel(application
                     "La apoptosis elimina células no deseadas sin romper la membrana ni causar inflamación.",
                     "El tejido de amputación en pancreatitis presenta saponificación de las grasas (jabones de calcio)."
                 ),
-                examTips = "Infarto de miocardio = Necrosis coagulativa (imagen en lápida sepulcral). Infarto cerebral = Necrosis licuefactiva."
+                examTips = "Infarto de miocardio = Necrosis coagulativa (imagen en lápida sepulcral). Infarto cerebral = Necrosis licuefactiva.",
+                keywords = listOf("Necrosis", "Apoptosis", "Esteatosis")
             ),
             UcsClassPlan(
                 id = "sem5_tema2",
@@ -555,7 +559,8 @@ class MedStudyViewModel(application: Application) : AndroidViewModel(application
                     "La calcificación distrófica ocurre en tejidos necróticos con calcio sérico normal.",
                     "La calcificación metastásica ocurre en tejidos sanos por hipercalcemia (ej. hiperparatiroidismo)."
                 ),
-                examTips = "Kimmelstiel-Wilson = patognomónico de Diabetes Mellitus. Lipofuscina = pigmento de desgaste por envejecimiento."
+                examTips = "Kimmelstiel-Wilson = patognomónico de Diabetes Mellitus. Lipofuscina = pigmento de desgaste por envejecimiento.",
+                keywords = listOf("Ateroma", "Calcificación", "Kimmelstiel")
             ),
             UcsClassPlan(
                 id = "sem6_tema3",
@@ -577,7 +582,8 @@ class MedStudyViewModel(application: Application) : AndroidViewModel(application
                     "La inflamación granulomatosa se caracteriza por células epitelioides y células gigantes (ej. Tuberculosis).",
                     "Los reactantes de fase aguda como la PCR se incrementan significativamente en suero."
                 ),
-                examTips = "Pasos leucocitarios en orden: Marginación -> Rodamiento -> Adhesión -> Migración -> Quimiotaxis -> Fagocitosis."
+                examTips = "Pasos leucocitarios en orden: Marginación -> Rodamiento -> Adhesión -> Migración -> Quimiotaxis -> Fagocitosis.",
+                keywords = listOf("Exudado", "Histamina", "Granuloma")
             ),
             UcsClassPlan(
                 id = "sem7_tema4",
@@ -600,7 +606,8 @@ class MedStudyViewModel(application: Application) : AndroidViewModel(application
                     "La cicatrización por 2da intención presenta mayor pérdida tisular, más tejido de granulación y contracción.",
                     "La deficiencia de Vitamina C y proteínas inhibe la síntesis de colágeno y retrasa la curación."
                 ),
-                examTips = "Células lábiles = epitelio/piel. Estables = hepatocitos/túbulos renales. Permanentes = neuronas/corazón."
+                examTips = "Células lábiles = epitelio/piel. Estables = hepatocitos/túbulos renales. Permanentes = neuronas/corazón.",
+                keywords = listOf("Granulación", "Angiogénesis", "Cicatrización")
             ),
             UcsClassPlan(
                 id = "sem8_tema5",
@@ -622,7 +629,8 @@ class MedStudyViewModel(application: Application) : AndroidViewModel(application
                     "La consanguinidad aumenta la probabilidad de afecciones autosómicas recesivas.",
                     "La hemofilia A se debe a deficiencia del Factor VIII de coagulación."
                 ),
-                examTips = "Padres sanos con hijo enfermo = herencia autosómica recesiva (ambos padres son heterocigotos Aa)."
+                examTips = "Padres sanos con hijo enfermo = herencia autosómica recesiva (ambos padres son heterocigotos Aa).",
+                keywords = listOf("Mendeliana", "Pedigrí", "Hemofilia")
             ),
             UcsClassPlan(
                 id = "sem9_tema5",
@@ -644,7 +652,8 @@ class MedStudyViewModel(application: Application) : AndroidViewModel(application
                     "Angelman se expresa si la deleción 15q11-13 ocurre en el cromosoma materno; Prader-Willi si ocurre en el paterno.",
                     "La Fenilcetonuria (PKU) se debe a deficiencia de la enzima fenilalanina hidroxilasa (PAH)."
                 ),
-                examTips = "Frágil X = expansión de triplete CGG > 200. Transmisión mitocondrial = estricta vía materna."
+                examTips = "Frágil X = expansión de triplete CGG > 200. Transmisión mitocondrial = estricta vía materna.",
+                keywords = listOf("Mitocondrial", "Impronta", "Frágil-X")
             ),
             UcsClassPlan(
                 id = "sem10_tema5",
@@ -666,7 +675,8 @@ class MedStudyViewModel(application: Application) : AndroidViewModel(application
                     "Mujer normal (46,XX) = 1 Cuerpo de Barr; Síndrome de Turner (45,X) = 0 Cuerpos de Barr; Klinefelter (47,XXY) = 1 Cuerpo de Barr.",
                     "La translocación robertsoniana 14/21 entre acrocéntricos puede causar Down hereditario."
                 ),
-                examTips = "Cuerpos de Barr en Klinefelter (47,XXY) = 1. Cuerpos de Barr en Turner (45,X) = 0."
+                examTips = "Cuerpos de Barr en Klinefelter (47,XXY) = 1. Cuerpos de Barr en Turner (45,X) = 0.",
+                keywords = listOf("Aneuploidía", "Cariotipo", "Cromatina")
             ),
             UcsClassPlan(
                 id = "sem11_tema5",
@@ -688,7 +698,8 @@ class MedStudyViewModel(application: Application) : AndroidViewModel(application
                     "La Ley de Hardy-Weinberg presupone matrimonios al azar, población grande y ausencia de mutación/selección.",
                     "p² representa homocigotos dominantes (AA), 2pq heterocigotos (Aa), y q² homocigotos recesivos (aa)."
                 ),
-                examTips = "Si en una población 700 de 1000 son Rh positivos, la frecuencia fenotípica es del 70% (0.70)."
+                examTips = "Si en una población 700 de 1000 son Rh positivos, la frecuencia fenotípica es del 70% (0.70).",
+                keywords = listOf("ABO-Rh", "HLA", "Hardy-Weinberg")
             ),
             UcsClassPlan(
                 id = "sem12_tema5",
@@ -712,7 +723,8 @@ class MedStudyViewModel(application: Application) : AndroidViewModel(application
                     "Deformación = fuerza mecánica anómala sobre tejido normal (ej. pie zambo por oligohidramnios).",
                     "El asesoramiento genético debe ser no directivo, respetando la autonomía del paciente."
                 ),
-                examTips = "Riesgo mendeliano = predicción teórica (50% en autosómica dominante). Riesgo empírico = basado en datos estadísticos."
+                examTips = "Riesgo mendeliano = predicción teórica (50% en autosómica dominante). Riesgo empírico = basado en datos estadísticos.",
+                keywords = listOf("Multifactorial", "Malformación", "Asesoramiento")
             )
         )
     }
@@ -734,7 +746,31 @@ class MedStudyViewModel(application: Application) : AndroidViewModel(application
                     "Capítulo 3: Reparación tisular, regeneración y cicatrización por 1ra y 2da intención.",
                     "Capítulo 5: Trastornos genéticos, enfermedades monogénicas y cromosómicas."
                 ),
-                profTip = "Del Robbins y Cotran, recuerden de memoria la diferencia morfológica entre Necrosis Licuefactiva (típica en cerebro por digestión enzimática) y Necrosis Coagulativa (infartos, excepto cerebro). ¡Es pregunta fija de examen!"
+                profTip = "Del Robbins y Cotran, recuerden de memoria la diferencia morfológica entre Necrosis Licuefactiva (típica en cerebro por digestión enzimática) y Necrosis Coagulativa (infartos, excepto cerebro). ¡Es pregunta fija de examen!",
+                fullChapterContent = """
+                    TEXTO COMPLETO BIBLIOGRÁFICO: ROBBINS Y COTRAN (PATOLOGÍA ESTRUCTURAL Y FUNCIONAL - 10MA EDICIÓN)
+
+                    CAPÍTULO 1: RESPUESTAS CELULARES AL ESTRÉS Y A LOS TÓXICOS: ADAPTACIÓN, LESIÓN Y MUERTE
+                    1. Adaptación Celular:
+                    - Atrofia: Reducción del tamaño celular y tisular por pérdida de sustancia celular (autofagia). Etiología: desuso, denervación, disminución del riego sanguíneo, nutrición inadecuada, pérdida de estimulación endocrina.
+                    - Hipertrofia: Aumento del tamaño de las células que reacciona incrementando el tamaño del órgano. Ocurre por síntesis acelerada de proteínas estructurales y miofilamentos (ej. Miocardio en Hipertensión Arterial).
+                    - Hiperplasia: Aumento en el número de células en un órgano o tejido. Puede ser fisiológica (hormonal o compensadora en hígado) o patológica (estimulación excesiva por andrógenos en hiperplasia prostática benigna).
+                    - Metaplasia: Cambio reversible en el que un tipo celular adulto (epitelial o mesenquimatoso) es sustituido por otro tipo celular adulto más resistente a la agresión (ej. Metaplasia escamosa en el epitelio respiratorio del fumador).
+
+                    2. Lesión Celular Hipóxica:
+                    - La hipoxia (deficiencia de oxígeno) reduce la fosforilación oxidativa mitocondrial, lo que disminuye la producción de ATP.
+                    - La depleción de ATP inactiva la bomba Na+/K+ ATPasa de la membrana plasmática, provocando entrada masiva de sodio y agua (tumefacción celular edema hidrópico) y salida de potasio.
+                    - Aumento de la glucólisis anaeróbica para mantener el ATP, lo que agota el glucógeno celular y acumula ácido láctico, disminuyendo el pH intracelular y condensando la cromatina nuclear.
+                    - La falla en la bomba de calcio de la membrana permite la entrada de Ca2+ al citosol, activando fosfolipasas, proteasas, ATPasas y endonucleasas destructivas.
+
+                    3. Muerte Celular: Necrosis vs Apoptosis:
+                    - Necrosis: Siempre es un proceso patológico. Se caracteriza por tumefacción celular, desnaturalización de proteínas, digestión enzimática de organelas y rotura de la membrana plasmática con salida del contenido celular provocando respuesta inflamatoria local.
+                      • Coagulativa: Preserva la arquitectura celular durante días; típica de infartos en órganos sólidos (corazón, riñón, bazo).
+                      • Licuefactiva: Autodigestión enzimática rápida; típica de infecciones bacterianas purulentas e infartos del Sistema Nervioso Central.
+                      • Caseosa: Aspecto 'a queso blanco'; característica de granulomas en Tuberculosis (Mycobacterium tuberculosis).
+                      • Enzimática de Grasas: Activación de lipasas pancreáticas que liberan ácidos grasos que se combinan con calcio formando jabones (saponificación) en pancreatitis aguda.
+                    - Apoptosis: Muerte celular programada limpia, fisiológica o patológica. No rompe la membrana ni provoca inflamación. Mediada por caspasas (vía intrínseca mitocondrial mediada por citocromo c y Bcl-2; vía extrínseca mediada por receptores de muerte Fas/TNF).
+                """.trimIndent()
             ),
             AcademicBook(
                 id = "lantigua",
@@ -751,7 +787,39 @@ class MedStudyViewModel(application: Application) : AndroidViewModel(application
                     "Capítulo 10: Interferencias biológicas, herencia mitocondrial, impronta genómica y mutaciones dinámicas.",
                     "Capítulo 12: Genética poblacional y equilibrio de Hardy-Weinberg."
                 ),
-                profTip = "De la Dra. Lantigua, no olviden repasar la Herencia Multifactorial y las Aberraciones Cromosómicas. Los ejercicios de Cuerpos de Barr = (X - 1) son evaluados sistemáticamente."
+                profTip = "De la Dra. Lantigua, no olviden repasar la Herencia Multifactorial y las Aberraciones Cromosómicas. Los ejercicios de Cuerpos de Barr = (X - 1) son evaluados sistemáticamente.",
+                fullChapterContent = """
+                    TEXTO COMPLETO BIBLIOGRÁFICO: INTRODUCCIÓN A LA GENÉTICA MÉDICA (DRA. ARACELI LANTIGUA CRUZ - UCS)
+
+                    CAPÍTULO 5: TRANSMISIÓN DE SIMPLES MUTACIONES (HERENCIA MENDELIANA)
+                    1. Herencia Autosómica Dominante (AD):
+                    - El gen mutado se ubica en un autosoma (cromosomas 1 al 22). Se expresa en heterocigotos (Aa).
+                    - Patrón de transmisión vertical: se presenta en todas las generaciones consecutivas.
+                    - Un progenitor afectado tiene un 50% (1/2) de probabilidad de transmitir la enfermedad a cada hijo, independientemente del sexo.
+                    - Ejemplos: Polidactilia, Acondroplasia, Síndrome de Marfan, Corea de Huntington.
+
+                    2. Herencia Autosómica Recesiva (AR):
+                    - Se requiere el estado homocigoto (aa) para la manifestación clínica. Los heterocigotos (Aa) son portadores asintomáticos.
+                    - Patrón de transmisión horizontal: la enfermedad aparece en hermanos pero no en los padres.
+                    - Dos padres portadores asintomáticos (Aa x Aa) tienen un 25% (1/4) de probabilidad de tener un hijo enfermo (aa), 50% de hijos portadores (Aa) y 25% de hijos sanos (AA).
+                    - La consanguinidad de los padres eleva significativamente el riesgo.
+                    - Ejemplos: Albinismo oculocutáneo, Anemia Drapanocítica (Sicklemia), Fibrosis Quística, Fenilcetonuria (PKU).
+
+                    3. Herencia Recesiva Ligada al Cromosoma X (XR):
+                    - El gen defectuoso se encuentra en el cromosoma X.
+                    - Los varones (XY) son hemicigotos; si heredan el X mutado expresarán la enfermedad al 100%. Las mujeres (XX) heterocigotas son portadoras sanas debido a la compensación de dosis (Hipótesis de Lyon).
+                    - Nunca hay transmisión de varón a varón (un padre da su cromosoma Y a sus hijos varones).
+                    - Un varón afectado transmite el cromosoma X mutado al 100% de sus hijas mujeres (quienes serán portadoras obligadas).
+                    - Ejemplos: Hemofilia A y B, Daltonismo, Distrofia Muscular de Duchenne.
+
+                    CAPÍTULO 8 Y 10: CITOGENÉTICA Y ABERRACIONES CROMOSÓMICAS
+                    - Regla de Cuerpos de Barr (Cromatina Sexual): N° de Cuerpos de Barr = Total de Cromosomas X - 1.
+                      • Varón normal (46,XY) = 0 Cuerpos de Barr.
+                      • Mujer normal (46,XX) = 1 Cuerpo de Barr.
+                      • Síndrome de Turner (45,X) = 0 Cuerpos de Barr.
+                      • Síndrome de Klinefelter (47,XXY) = 1 Cuerpo de Barr.
+                    - Trisomía 21 (Síndrome de Down): 47,XX,+21 o 47,XY,+21. Causa más común de discapacidad intelectual genética, originada en un 95% por no disyunción meiótica materna en Meiosis I.
+                """.trimIndent()
             ),
             AcademicBook(
                 id = "rubin",
@@ -768,7 +836,57 @@ class MedStudyViewModel(application: Application) : AndroidViewModel(application
                     "Triada de Virchow en la patogenia de los trombos vasculares.",
                     "Shock endotóxico y fallo multiorgánico."
                 ),
-                profTip = "Del Rubin y Strayer les recomiendo estudiar a fondo los diagramas de shock endotóxico, la cascada de citoquinas IL-1 e IL-6, y la respuesta tisular al Factor de Necrosis Tumoral (TNF)."
+                profTip = "Del Rubin y Strayer les recomiendo estudiar a fondo los diagramas de shock endotóxico, la cascada de citoquinas IL-1 e IL-6, y la respuesta tisular al Factor de Necrosis Tumoral (TNF).",
+                fullChapterContent = """
+                    TEXTO COMPLETO BIBLIOGRÁFICO: RUBIN Y STRAYER (FUNDAMENTOS CLINICOPATOLÓGICOS)
+
+                    TRASTORNOS HEMODINÁMICOS Y SHOCK
+                    1. Edema:
+                    - Acumulación patológica de líquido en los espacios de tejido intersticial o cavidades corporales.
+                    - Exudado: Líquido inflamatorio rico en proteínas (densidad > 1.020) y leucocitos, secundario al aumento de la permeabilidad vascular.
+                    - Trasudado: Líquido no inflamatorio pobre en proteínas (densidad < 1.012), secundario a aumento de presión hidrostática (ej. Insuficiencia Cardíaca Congestiva) o disminución de presión coloidosmótica por hipoalbuminemia (ej. Cirrosis o Síndrome Nefrótico).
+
+                    2. Triada de Virchow en Trombosis:
+                    - Lesión Endotelial: Exposición de colágeno subendotelial y factor tisular.
+                    - Estasis / Turbulencia del Flujo: Alteración del flujo laminar normal.
+                    - Hipercoagulabilidad: Alteraciones moleculares de la cascada de coagulación.
+
+                    3. Shock:
+                    - Colapso cardiovascular caracterizado por hipoperfusión tisular sistémica.
+                      • Cardiogénico: Falla de la bomba cardíaca (IAM, arritmias).
+                      • Hipovolémico: Pérdida aguda de volumen plasmático (hemorragias, quemaduras).
+                      • Séptico / Endotóxico: Vasodilatación sistémica por tormenta de citoquinas (TNF, IL-1) inducida por lipopolisacáridos (LPS) de bacterias gramnegativas.
+                """.trimIndent()
+            ),
+            AcademicBook(
+                id = "guyton",
+                title = "Guyton y Hall",
+                author = "Tratado de Fisiología Médica (14ta Ed.)",
+                category = "Fisiología UCS",
+                tag = "Fundamento Fisiológico",
+                colorStartHex = 0xFF0284C7,
+                colorEndHex = 0xFF0369A1,
+                summary = "Texto esencial para comprender el funcionamiento celular y tisular normal. Sirve de base fisiológica directa para comparar las alteraciones estructurales y funcionales en Morfofisiopatología Humana I.",
+                keyHighlights = listOf(
+                    "Capítulo 1: Homeostasis y sistemas de retroalimentación.",
+                    "Capítulo 4: Transporte de sustancias a través de la membrana celular (Bomba Na+/K+).",
+                    "Capítulo 9: Fisiología del músculo cardíaco y excitación rítmica.",
+                    "Capítulo 15: Flujo sanguíneo perisférico y regulación de la presión arterial."
+                ),
+                profTip = "Del Guyton y Hall, repasen la Fisiología de la Bomba Na+/K+ ATPasa y el potencial de membrana de reposo. ¡Entender esto es la clave para comprender la tumefacción celular por hipoxia!",
+                fullChapterContent = """
+                    TEXTO COMPLETO BIBLIOGRÁFICO: GUYTON Y HALL (TRATADO DE FISIOLOGÍA MÉDICA)
+
+                    MANTENIMIENTO DE LA HOMEOSTASIS Y TRANSPORTE CELULAR
+                    1. Homeostasis:
+                    - Mantenimiento de las condiciones casi constantes del medio interno (líquido extracelular que baña las células).
+                    - Regulado por sistemas de retroalimentación negativa (mecanismo que devuelve la variable hacia el valor medio deseado) y retroalimentación positiva (que puede provocar círculos viciosos si no es controlada).
+
+                    2. Bomba Sodio-Potasio (Na+/K+ ATPasa):
+                    - Transporte activo primario de membrana que bombea 3 iones Na+ hacia el exterior de la célula y 2 iones K+ hacia el interior por cada molécula de ATP hidrolizada.
+                    - Mantiene el gradiente electroquímico intracelular y controla el volumen de la célula evitando que el agua ingrese masivamente por ósmosis.
+                    - Cuando la célula sufre falta de oxígeno (hipoxia), se detiene la producción de ATP mitocondrial, falla la bomba Na+/K+, ingresa sodio y agua en exceso, causando la tumefacción celular hidrópica vista en patología.
+                """.trimIndent()
             ),
             AcademicBook(
                 id = "neopat",
@@ -785,7 +903,22 @@ class MedStudyViewModel(application: Application) : AndroidViewModel(application
                     "Lámina de Glomeruloesclerosis Nodular de Kimmelstiel-Wilson.",
                     "Lámina de Pericarditis Fibrinosa 'en pan con mantequilla'."
                 ),
-                profTip = "Las guías prácticas del NEOPAT les exigen identificar muestras de inflamación granulomatosa crónico-caseosa. Busquen siempre las células gigantes multinucleadas de tipo Langhans."
+                profTip = "Las guías prácticas del NEOPAT les exigen identificar muestras de inflamación granulomatosa crónico-caseosa. Busquen siempre las células gigantes multinucleadas de tipo Langhans.",
+                fullChapterContent = """
+                    GUÍA DE LÁMINAS HISTOPATOLÓGICAS PRÁCTICAS - SOFTWARE NEOPAT (UCS)
+
+                    1. Lámina N-01: Infarto Agudo de Miocardio (Necrosis Coagulativa)
+                    - Coloración Hematoxilina-Eosina (H-E).
+                    - Observación: Cardiomiocitos eosinófilos intensos (más rosados) con pérdida del núcleo (cariólisis) o núcleos fragmentados (cariorrexis). Se observan las estriaciones transversales aún visibles de forma fantasma ("imágenes en lápida sepulcral") e infiltración neutrofílica intersticial temprana.
+
+                    2. Lámina N-04: Tuberculosis Pulmonar (Necrosis Caseosa y Granuloma)
+                    - Coloración H-E.
+                    - Observación: Centro del granuloma con material necrótico eosinófilo amorfo y granular (caseum). Rodeado por una corona de células epitelioides (macrófagos activados de citoplasma amplio) y Células Gigantes Multinucleadas de tipo Langhans (núcleos dispuestos en herradura en la periferia celular).
+
+                    3. Lámina N-08: Hígado Graso (Esteatosis Hepática)
+                    - Coloración H-E.
+                    - Observación: Hepatocitos cargados de grandes vacuolas lipídicas ópticamente vacías (se lavaron durante la preparación con xilol) que desplazan el núcleo hepatocitario hacia la periferia (apariencia de anillo de sello).
+                """.trimIndent()
             )
         )
     }
