@@ -20,6 +20,9 @@ interface MedStudyDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertGuide(guide: StudyGuideEntity)
 
+    @androidx.room.Delete
+    suspend fun deleteGuide(guide: StudyGuideEntity)
+
     @Query("SELECT * FROM exam_stats WHERE id = 1")
     fun getExamStats(): Flow<ExamStatsEntity?>
 

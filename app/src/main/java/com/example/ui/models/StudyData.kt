@@ -9,6 +9,7 @@ data class SocraticOption(
 
 data class SocraticDialogue(
     val id: String,
+    val topicTitle: String,
     val profPrompt: String,
     val options: List<SocraticOption>
 )
@@ -35,7 +36,25 @@ data class AcademicBook(
     val tag: String,
     val colorStartHex: Long,
     val colorEndHex: Long,
+    val summary: String,
+    val keyHighlights: List<String>,
     val profTip: String
+)
+
+data class UcsClassPlan(
+    val id: String,
+    val week: Int,
+    val themeNumber: Int,
+    val title: String,
+    val topicName: String,
+    val method: String = "Expositivo, Ilustrativo",
+    val summaryText: String,
+    val objectives: List<String>,
+    val cellularMechanisms: String,
+    val morphologicalFeatures: String,
+    val diagnosticEvidence: String,
+    val conclusions: List<String>,
+    val examTips: String
 )
 
 data class PuzzleItem(
@@ -59,3 +78,4 @@ data class ChatMessage(
     val isAiGenerated: Boolean = false,
     val timestamp: Long = System.currentTimeMillis()
 )
+

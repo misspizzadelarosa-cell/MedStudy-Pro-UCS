@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -23,12 +25,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.example.R
+import com.example.data.local.StudyGuideEntity
 import com.example.ui.MedStudyTab
 import com.example.ui.MedStudyUiState
 import com.example.ui.MedStudyViewModel
@@ -42,6 +48,38 @@ fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.uiState.collectAsState()
+
+    // Modals / Dialogs for active selections
+    state.selectedBookForDialog?.let { book ->
+        AcademicBookReaderDialog(
+            book = book,
+            onDismiss = { viewModel.closeBookDialog() }
+        )
+    }
+
+    state.selectedClassPlanForDialog?.let { plan ->
+        UcsClassPlanReaderDialog(
+            plan = plan,
+            onDismiss = { viewModel.closeClassPlanDialog() },
+            onStartSocraticCase = {
+                viewModel.closeClassPlanDialog()
+                viewModel.switchTab(MedStudyTab.SOCRATIC)
+            }
+        )
+    }
+
+    state.selectedCustomGuideForDialog?.let { guide ->
+        CustomGuideReaderDialog(
+            guide = guide,
+            onDismiss = { viewModel.closeCustomGuideDialog() },
+            onDelete = { viewModel.deleteCustomGuide(guide) },
+            onAskAiAboutGuide = {
+                viewModel.closeCustomGuideDialog()
+                viewModel.switchTab(MedStudyTab.SOCRATIC)
+                viewModel.askCustomQuestionToProfessor("Explícame en detalle y con caso clínico los puntos clave de mi guía: ${guide.title}")
+            }
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -149,54 +187,43 @@ fun HeaderGamificationBar(state: MedStudyUiState) {
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
-                            Text(
-                                text = "NIVEL ${state.userLevel}",
-                                style = MaterialTheme.typography.labelMedium,
-                                fontWeight = FontWeight.Black,
-                                color = VibrantHighlight
-                            )
-                            Text(
-                                text = "🔥 ${state.userStreak}d",
-                                style = MaterialTheme.typography.labelMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = GoldStreak
-                            )
+                            Text("🔥 ${state.userStreak}d", fontWeight = FontWeight.Bold, color = Color(0xFFFFB74D), fontSize = 12.sp)
+                            Text("•", color = Color.White.copy(alpha = 0.6f))
+                            Text("Nivel ${state.userLevel}", fontWeight = FontWeight.ExtraBold, color = Color.White, fontSize = 12.sp)
                         }
                     }
                 }
 
-                // XP Progress Bar & Rank
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = "RANGO: ${state.userRankTitle}",
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.Bold,
+                // XP Progress Bar
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = "Rango: ${state.userRankTitle}",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Color.White.copy(alpha = 0.9f),
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Text(
+                            text = "${state.userXp} / 100 XP",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = VibrantHighlight,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    LinearProgressIndicator(
+                        progress = { (state.userXp % 100) / 100f },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(8.dp)
+                            .clip(CircleShape),
                         color = VibrantHighlight,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(
-                        text = "${state.userXp}/100 XP",
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = Color.White
+                        trackColor = Color.White.copy(alpha = 0.25f)
                     )
                 }
-
-                LinearProgressIndicator(
-                    progress = { (state.userXp / 100f).coerceIn(0f, 1f) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(6.dp)
-                        .clip(RoundedCornerShape(3.dp)),
-                    color = VibrantHighlight,
-                    trackColor = Color.White.copy(alpha = 0.25f)
-                )
             }
         }
     }
@@ -205,71 +232,54 @@ fun HeaderGamificationBar(state: MedStudyUiState) {
 @Composable
 fun ProfessorGomezBanner(state: MedStudyUiState) {
     Surface(
-        color = VibrantSurfaceVariant,
-        tonalElevation = 2.dp,
+        color = VibrantSurface,
+        border = androidx.compose.foundation.BorderStroke(1.dp, SlateCardBorder),
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
+                .padding(horizontal = 16.dp, vertical = 12.dp)
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Professor Avatar
-            Box(
-                modifier = Modifier
-                    .size(64.dp)
-                    .clip(CircleShape)
-                    .border(2.dp, VibrantPrimary, CircleShape)
+            Surface(
+                shape = CircleShape,
+                color = VibrantPrimaryContainer,
+                modifier = Modifier.size(48.dp)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.img_professor_gomez_1784656282351),
-                    contentDescription = "Prof. Gómez",
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
+                Box(contentAlignment = Alignment.Center) {
+                    Text("👨‍🔬", fontSize = 24.sp)
+                }
             }
 
-            // Speech Bubble
-            Surface(
-                shape = RoundedCornerShape(topStart = 4.dp, topEnd = 20.dp, bottomStart = 20.dp, bottomEnd = 20.dp),
-                color = VibrantSurface,
-                shadowElevation = 2.dp,
-                border = androidx.compose.foundation.BorderStroke(1.dp, SlateCardBorder),
-                modifier = Modifier.weight(1f)
-            ) {
-                Column(
-                    modifier = Modifier.padding(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
+            Column(modifier = Modifier.weight(1f)) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        Text(
-                            text = "Prof. Gómez (Docente UCS)",
-                            style = MaterialTheme.typography.labelMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = VibrantPrimary
-                        )
-                        Box(
-                            modifier = Modifier
-                                .size(8.dp)
-                                .clip(CircleShape)
-                                .background(EmeraldSuccess)
-                        )
-                    }
-
                     Text(
-                        text = state.professorBubbleText,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = SlateTextPrimary,
-                        lineHeight = 18.sp,
-                        maxLines = 4,
-                        overflow = TextOverflow.Ellipsis
+                        text = "Prof. Gómez (Docente UCS)",
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = VibrantPrimary
+                    )
+                    Box(
+                        modifier = Modifier
+                            .size(8.dp)
+                            .clip(CircleShape)
+                            .background(EmeraldSuccess)
                     )
                 }
+
+                Text(
+                    text = state.professorBubbleText,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = SlateTextPrimary,
+                    lineHeight = 18.sp,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         }
     }
@@ -313,7 +323,7 @@ fun TabRowSection(
     }
 }
 
-// ==================== TAB 1: BIBLIOTECA & SÍLABO ====================
+// ==================== TAB 1: BIBLIOTECA & PLANES DE CLASE ====================
 @Composable
 fun LibraryTabContent(
     viewModel: MedStudyViewModel,
@@ -350,7 +360,7 @@ fun LibraryTabContent(
                             .fillMaxSize()
                             .background(
                                 Brush.verticalGradient(
-                                    colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.7f))
+                                    colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.75f))
                                 )
                             )
                     )
@@ -360,7 +370,7 @@ fun LibraryTabContent(
                             .padding(16.dp)
                     ) {
                         Text(
-                            text = "Portal de Estudio Morfofisiopatología",
+                            text = "Portal de Estudio Morfofisiopatología I",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.ExtraBold,
                             color = Color.White
@@ -375,7 +385,219 @@ fun LibraryTabContent(
             }
         }
 
-        // Section: Uploader
+        // Section 1: Academic Bookshelf (Clickable Books!)
+        item {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    text = "LIBROS DE TEXTO OFICIALES (TOCA CUALQUIERA)",
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = SlateTextSecondary,
+                    letterSpacing = 1.sp
+                )
+
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(items = state.academicBooks, key = { it.id }) { book ->
+                        Card(
+                            modifier = Modifier
+                                .width(170.dp)
+                                .height(200.dp)
+                                .testTag("book_card_${book.id}")
+                                .clickable(role = Role.Button) { viewModel.openBookDialog(book) },
+                            shape = RoundedCornerShape(18.dp),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(
+                                        Brush.verticalGradient(
+                                            colors = listOf(
+                                                Color(book.colorStartHex),
+                                                Color(book.colorEndHex)
+                                            )
+                                        )
+                                    )
+                                    .padding(12.dp)
+                            ) {
+                                Column(
+                                    modifier = Modifier.fillMaxSize(),
+                                    verticalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Surface(
+                                        shape = RoundedCornerShape(6.dp),
+                                        color = Color.White.copy(alpha = 0.25f)
+                                    ) {
+                                        Text(
+                                            text = book.tag,
+                                            style = MaterialTheme.typography.labelSmall,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.White,
+                                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                        )
+                                    }
+
+                                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                        Text(
+                                            text = book.title,
+                                            style = MaterialTheme.typography.titleSmall,
+                                            fontWeight = FontWeight.ExtraBold,
+                                            color = Color.White,
+                                            maxLines = 2,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                        Text(
+                                            text = book.author,
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = Color.White.copy(alpha = 0.85f),
+                                            maxLines = 2,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Surface(
+                                            shape = RoundedCornerShape(12.dp),
+                                            color = Color.White,
+                                            modifier = Modifier.fillMaxWidth()
+                                        ) {
+                                            Text(
+                                                text = "📖 Leer Resumen",
+                                                style = MaterialTheme.typography.labelSmall,
+                                                fontWeight = FontWeight.Bold,
+                                                color = Color(book.colorEndHex),
+                                                textAlign = TextAlign.Center,
+                                                modifier = Modifier.padding(vertical = 4.dp)
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Section 2: Official Class Plans from Uploaded PDFs
+        item {
+            Text(
+                text = "PLANES DE CLASE PNFMIC / UCS (PDFs OFICIALES)",
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.ExtraBold,
+                color = SlateTextSecondary,
+                letterSpacing = 1.sp
+            )
+        }
+
+        items(items = state.classPlans, key = { it.id }) { plan ->
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("plan_card_${plan.id}")
+                    .clickable(role = Role.Button) { viewModel.openClassPlanDialog(plan) },
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = VibrantSurface),
+                border = androidx.compose.foundation.BorderStroke(1.dp, SlateCardBorder),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            ) {
+                Row(
+                    modifier = Modifier.padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(14.dp)
+                ) {
+                    Surface(
+                        shape = RoundedCornerShape(14.dp),
+                        color = VibrantPrimaryContainer,
+                        modifier = Modifier.size(52.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text("Semana", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = VibrantPrimary)
+                                Text("${plan.week}", fontSize = 18.sp, fontWeight = FontWeight.ExtraBold, color = VibrantPrimary)
+                            }
+                        }
+                    }
+
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = plan.topicName,
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = VibrantPrimary
+                        )
+                        Text(
+                            text = plan.title,
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = SlateTextPrimary
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = plan.summaryText,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = SlateTextSecondary,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+
+                    Icon(Icons.Default.ChevronRight, contentDescription = "Abrir Plan", tint = VibrantPrimary)
+                }
+            }
+        }
+
+        // Section 3: Custom Uploaded Guides
+        if (state.customGuides.isNotEmpty()) {
+            item {
+                Text(
+                    text = "TUS GUÍAS Y DOCUMENTOS GUARDADOS",
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = SlateTextSecondary,
+                    letterSpacing = 1.sp
+                )
+            }
+
+            items(items = state.customGuides, key = { it.id }) { guide ->
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("custom_guide_${guide.id}")
+                        .clickable(role = Role.Button) { viewModel.openCustomGuideDialog(guide) },
+                    shape = RoundedCornerShape(18.dp),
+                    colors = CardDefaults.cardColors(containerColor = VibrantBlueContainer),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFC2E7FF))
+                ) {
+                    Row(
+                        modifier = Modifier.padding(14.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Icon(Icons.Default.Description, contentDescription = null, tint = Color(0xFF001D35))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = guide.title,
+                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color(0xFF001D35)
+                            )
+                            Text(
+                                text = guide.content,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = SlateTextSecondary,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                        Icon(Icons.Default.ChevronRight, contentDescription = null, tint = Color(0xFF001D35))
+                    }
+                }
+            }
+        }
+
+        // Section 4: Uploader Form
         item {
             Card(
                 shape = RoundedCornerShape(20.dp),
@@ -396,7 +618,7 @@ fun LibraryTabContent(
                             tint = VibrantPrimary
                         )
                         Text(
-                            text = "Cargar Guías de Estudio PNFMIC / UCS",
+                            text = "Cargar Nueva Guía de Estudio / PDF",
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
                             color = SlateTextPrimary
@@ -404,7 +626,7 @@ fun LibraryTabContent(
                     }
 
                     Text(
-                        text = "Ingresa el título y contenido de tu guía o resumen. El Prof. Gómez las analizará y adaptará las preguntas socráticas.",
+                        text = "Ingresa el título y notas de tu material o PDF. Se guardarán en tu biblioteca y el Prof. Gómez responderá dudas socráticas sobre ellas.",
                         style = MaterialTheme.typography.bodySmall,
                         color = SlateTextSecondary
                     )
@@ -412,7 +634,7 @@ fun LibraryTabContent(
                     OutlinedTextField(
                         value = importTitle,
                         onValueChange = { importTitle = it },
-                        label = { Text("Título de la guía (ej. Resumen de Lesión Celular)") },
+                        label = { Text("Título del documento (ej. Resumen de Genética)") },
                         modifier = Modifier
                             .fillMaxWidth()
                             .testTag("import_title_input"),
@@ -422,7 +644,7 @@ fun LibraryTabContent(
                     OutlinedTextField(
                         value = importContent,
                         onValueChange = { importContent = it },
-                        label = { Text("Contenido o notas de la guía...") },
+                        label = { Text("Contenido o fragmento del texto...") },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(100.dp)
@@ -444,277 +666,7 @@ fun LibraryTabContent(
                     ) {
                         Icon(Icons.Default.Analytics, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Analizar con Prof. Gómez (+30 XP)", fontWeight = FontWeight.Bold)
-                    }
-                }
-            }
-        }
-
-        // Section: Loaded Materials
-        item {
-            Text(
-                text = "MATERIALES OFICIALES DE MORFOFISIOPATOLOGÍA I",
-                style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.ExtraBold,
-                color = SlateTextSecondary,
-                letterSpacing = 1.sp
-            )
-        }
-
-        item {
-            Surface(
-                shape = RoundedCornerShape(20.dp),
-                color = VibrantBlueContainer,
-                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFC2E7FF))
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(14.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        Text("🧬", fontSize = 24.sp)
-                        Column {
-                            Text(
-                                text = "Manual Introductorio de Morfofisiopatología I",
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = Color(0xFF001D35)
-                            )
-                            Text(
-                                text = "Sílaba Básica PNFMIC / UCS • Lesión y Muerte Celular",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = SlateTextSecondary
-                            )
-                        }
-                    }
-                    Surface(
-                        shape = RoundedCornerShape(12.dp),
-                        color = VibrantPrimaryContainer
-                    ) {
-                        Text(
-                            text = "Básico",
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = VibrantOnPrimaryContainer,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                        )
-                    }
-                }
-            }
-        }
-
-        items(items = state.customGuides, key = { it.id }) { guide ->
-            Surface(
-                shape = RoundedCornerShape(20.dp),
-                color = VibrantPinkContainer,
-                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF3BFEA))
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(14.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        Text("📄", fontSize = 24.sp)
-                        Column {
-                            Text(
-                                text = guide.title,
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = Color(0xFF31111D)
-                            )
-                            Text(
-                                text = guide.category,
-                                style = MaterialTheme.typography.labelSmall,
-                                color = SlateTextSecondary
-                            )
-                        }
-                    }
-                    Surface(
-                        shape = RoundedCornerShape(12.dp),
-                        color = VibrantPrimaryContainer
-                    ) {
-                        Text(
-                            text = "Estudiante",
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = VibrantOnPrimaryContainer,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                        )
-                    }
-                }
-            }
-        }
-
-        // Section: Academic Bookshelf
-        item {
-            Text(
-                text = "ESTANTE ACADÉMICO (TOCA UN LIBRO)",
-                style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.ExtraBold,
-                color = SlateTextSecondary,
-                letterSpacing = 1.sp
-            )
-        }
-
-        item {
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(items = state.academicBooks, key = { it.id }) { book ->
-                    Card(
-                        modifier = Modifier
-                            .width(160.dp)
-                            .height(180.dp)
-                            .testTag("book_card_${book.id}")
-                            .clickable { viewModel.onBookClicked(book) },
-                        shape = RoundedCornerShape(16.dp),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(
-                                    Brush.verticalGradient(
-                                        colors = listOf(
-                                            Color(book.colorStartHex),
-                                            Color(book.colorEndHex)
-                                        )
-                                    )
-                                )
-                                .padding(12.dp)
-                        ) {
-                            Column(
-                                modifier = Modifier.fillMaxSize(),
-                                verticalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Surface(
-                                    shape = RoundedCornerShape(6.dp),
-                                    color = Color.White.copy(alpha = 0.2f)
-                                ) {
-                                    Text(
-                                        text = book.tag,
-                                        style = MaterialTheme.typography.labelSmall,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color.White,
-                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                                    )
-                                }
-
-                                Column {
-                                    Text(
-                                        text = book.title,
-                                        style = MaterialTheme.typography.titleSmall,
-                                        fontWeight = FontWeight.ExtraBold,
-                                        color = Color.White,
-                                        maxLines = 2,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                    Text(
-                                        text = book.author,
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = Color.White.copy(alpha = 0.8f),
-                                        maxLines = 2,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // Section: Core Modules
-        item {
-            Text(
-                text = "NÚCLEOS TEMÁTICOS DE 2DO AÑO (UCS)",
-                style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.ExtraBold,
-                color = SlateTextSecondary,
-                letterSpacing = 1.sp
-            )
-        }
-
-        item {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag("module_lesion_celular")
-                        .clickable { viewModel.loadUcsModule("lesion_celular") },
-                    shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(containerColor = VibrantSurface),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, SlateCardBorder)
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        Text("💀", fontSize = 28.sp)
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text("Tema 1: Lesión y Muerte Celular", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyMedium)
-                            Text("Mecanismos de tumefacción, esteatosis, necrosis (coagulativa, licuefactiva, caseosa) y apoptosis.", style = MaterialTheme.typography.bodySmall, color = SlateTextSecondary)
-                        }
-                        Icon(Icons.Default.ChevronRight, contentDescription = null, tint = VibrantPrimary)
-                    }
-                }
-
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag("module_genetica")
-                        .clickable { viewModel.loadUcsModule("genetica") },
-                    shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(containerColor = VibrantSurface),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, SlateCardBorder)
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        Text("🧬", fontSize = 28.sp)
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text("Tema 2: Genética Médica y Alteraciones", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyMedium)
-                            Text("Cromosomopatías, aberraciones numéricas y estructurales según la Dra. Araceli Lantigua.", style = MaterialTheme.typography.bodySmall, color = SlateTextSecondary)
-                        }
-                        Icon(Icons.Default.ChevronRight, contentDescription = null, tint = VibrantPrimary)
-                    }
-                }
-
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag("module_hemodinamia")
-                        .clickable { viewModel.loadUcsModule("hemodinamia") },
-                    shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(containerColor = VibrantSurface),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, SlateCardBorder)
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        Text("🩸", fontSize = 28.sp)
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text("Tema 3: Trastornos Hemodinámicos", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyMedium)
-                            Text("Procesos de congestión pasiva, edema, trombosis, embolia e infarto tisular.", style = MaterialTheme.typography.bodySmall, color = SlateTextSecondary)
-                        }
-                        Icon(Icons.Default.ChevronRight, contentDescription = null, tint = VibrantPrimary)
+                        Text("Guardar y Analizar (+30 XP)", fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -742,12 +694,23 @@ fun SocraticChatTabContent(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = "Tutor Socrático Activo",
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.Bold,
-                color = SlateTextPrimary
-            )
+            Column {
+                Text(
+                    text = "Tutor Socrático Activo",
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = SlateTextPrimary
+                )
+                state.currentDialogue?.let {
+                    Text(
+                        text = "Caso: ${it.topicTitle}",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = VibrantPrimary,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+
             OutlinedButton(
                 onClick = { viewModel.resetSocraticChat() },
                 modifier = Modifier.testTag("reset_chat_button"),
@@ -780,7 +743,7 @@ fun SocraticChatTabContent(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         CircularProgressIndicator(modifier = Modifier.size(18.dp), color = VibrantPrimary, strokeWidth = 2.dp)
-                        Text("Prof. Gómez analizando el caso...", style = MaterialTheme.typography.bodySmall, color = VibrantPrimary)
+                        Text("Prof. Gómez analizando con el temario...", style = MaterialTheme.typography.bodySmall, color = VibrantPrimary)
                     }
                 }
             }
@@ -789,7 +752,7 @@ fun SocraticChatTabContent(
         // Option Arguments for current dialogue
         state.currentDialogue?.let { dialogue ->
             Column(
-                verticalArrangement = Arrangement.spacedBy(6.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
                     text = "SELECCIONA TU ARGUMENTO CLÍNICO:",
@@ -810,7 +773,10 @@ fun SocraticChatTabContent(
                             text = option.text,
                             style = MaterialTheme.typography.bodySmall,
                             textAlign = TextAlign.Start,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            color = SlateTextPrimary
                         )
                     }
                 }
@@ -973,7 +939,7 @@ fun PathologyPuzzleTabContent(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text("PASO 1: ORGANELA / CAUSA", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = SlateTextSecondary)
+                    Text("PASO 1: CAUSA / ORGANELA", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = SlateTextSecondary)
                     for (item in state.puzzleItems) {
                         val isMatched = state.matchedIds.contains(item.id)
                         val isSelected = state.selectedOrganelleId == item.id
@@ -982,7 +948,7 @@ fun PathologyPuzzleTabContent(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .testTag("puzzle_organelle_${item.id}")
-                                .clickable(enabled = !isMatched) { viewModel.selectPuzzleOrganelle(item.id) },
+                                .clickable(enabled = !isMatched, role = Role.Button) { viewModel.selectPuzzleOrganelle(item.id) },
                             shape = RoundedCornerShape(18.dp),
                             colors = CardDefaults.cardColors(
                                 containerColor = when {
@@ -1020,7 +986,7 @@ fun PathologyPuzzleTabContent(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text("PASO 2: SÍNDROME / PATOLOGÍA", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = SlateTextSecondary)
+                    Text("PASO 2: SÍNDROME / ENTIDAD", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = SlateTextSecondary)
                     for (item in state.puzzleItems) {
                         val isMatched = state.matchedIds.contains(item.id)
 
@@ -1028,7 +994,7 @@ fun PathologyPuzzleTabContent(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .testTag("puzzle_syndrome_${item.id}")
-                                .clickable(enabled = !isMatched) { viewModel.selectPuzzleSyndrome(item.id) },
+                                .clickable(enabled = !isMatched, role = Role.Button) { viewModel.selectPuzzleSyndrome(item.id) },
                             shape = RoundedCornerShape(18.dp),
                             colors = CardDefaults.cardColors(
                                 containerColor = if (isMatched) EmeraldSuccess.copy(alpha = 0.15f) else VibrantSurface
@@ -1141,7 +1107,7 @@ fun ExamSimulatorTabContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("exam_option_${option.key}")
-                    .clickable(enabled = !isAnswered) { viewModel.selectExamOption(option) },
+                    .clickable(enabled = !isAnswered, role = Role.Button) { viewModel.selectExamOption(option) },
                 shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(containerColor = cardBg),
                 border = androidx.compose.foundation.BorderStroke(1.dp, cardBorder)
@@ -1213,6 +1179,401 @@ fun ExamSimulatorTabContent(
                     }
                 }
             }
+        }
+    }
+}
+
+// ==================== INTERACTIVE READER DIALOGS ====================
+
+@Composable
+fun UcsClassPlanReaderDialog(
+    plan: UcsClassPlan,
+    onDismiss: () -> Unit,
+    onStartSocraticCase: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth(0.92f)
+                .fillMaxHeight(0.85f),
+            shape = RoundedCornerShape(28.dp),
+            color = VibrantBackground,
+            border = androidx.compose.foundation.BorderStroke(2.dp, VibrantPrimary),
+            shadowElevation = 16.dp
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(20.dp)
+            ) {
+                // Dialog Header
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "PLAN DE CLASE OFICIAL • SEMANA ${plan.week}",
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = VibrantPrimary
+                        )
+                        Text(
+                            text = plan.title,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = SlateTextPrimary
+                        )
+                    }
+
+                    IconButton(
+                        onClick = onDismiss,
+                        modifier = Modifier.testTag("close_plan_dialog")
+                    ) {
+                        Icon(Icons.Default.Close, contentDescription = "Cerrar", tint = SlateTextPrimary)
+                    }
+                }
+
+                Divider(modifier = Modifier.padding(vertical = 12.dp), color = SlateCardBorder)
+
+                // Scrollable Content Body
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    // Summary Section
+                    SectionCard(title = "📌 Sumario del Tema", color = VibrantBlueContainer) {
+                        Text(plan.summaryText, style = MaterialTheme.typography.bodyMedium, lineHeight = 20.sp)
+                    }
+
+                    // Objectives Section
+                    SectionCard(title = "🎯 Objetivos de la Clase", color = VibrantPinkContainer) {
+                        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                            plan.objectives.forEachIndexed { idx, obj ->
+                                Text("${idx + 1}. $obj", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Medium)
+                            }
+                        }
+                    }
+
+                    // Cellular Mechanisms & Pathology
+                    SectionCard(title = "⚙️ Mecanismos Celulares & Patogenia", color = VibrantSurface) {
+                        Text(plan.cellularMechanisms, style = MaterialTheme.typography.bodySmall, lineHeight = 20.sp)
+                    }
+
+                    // Morphological Features
+                    SectionCard(title = "🔬 Características Morfológicas", color = VibrantSurface) {
+                        Text(plan.morphologicalFeatures, style = MaterialTheme.typography.bodySmall, lineHeight = 20.sp)
+                    }
+
+                    // Diagnostic Evidence
+                    SectionCard(title = "🩺 Evidencias Diagnósticas", color = VibrantSurface) {
+                        Text(plan.diagnosticEvidence, style = MaterialTheme.typography.bodySmall, lineHeight = 20.sp)
+                    }
+
+                    // Conclusions
+                    SectionCard(title = "💡 Conclusiones Fundamentales", color = VibrantPrimaryContainer) {
+                        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                            plan.conclusions.forEach { conc ->
+                                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                    Text("•", fontWeight = FontWeight.Bold, color = VibrantPrimary)
+                                    Text(conc, style = MaterialTheme.typography.bodySmall)
+                                }
+                            }
+                        }
+                    }
+
+                    // Exam Tip
+                    Surface(
+                        shape = RoundedCornerShape(16.dp),
+                        color = Color(0xFFFFF3C4),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFFB74D))
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            Text("💡", fontSize = 22.sp)
+                            Column {
+                                Text("Tip del Examen UCS:", fontWeight = FontWeight.ExtraBold, style = MaterialTheme.typography.labelMedium, color = Color(0xFF8C4A00))
+                                Text(plan.examTips, style = MaterialTheme.typography.bodySmall, color = Color(0xFF5C3100))
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Bottom Action
+                Button(
+                    onClick = onStartSocraticCase,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("socratic_from_plan_button"),
+                    colors = ButtonDefaults.buttonColors(containerColor = VibrantPrimary)
+                ) {
+                    Icon(Icons.Default.Psychology, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Resolver Casos Socráticos de este Tema ➔", fontWeight = FontWeight.Bold)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun AcademicBookReaderDialog(
+    book: AcademicBook,
+    onDismiss: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth(0.92f)
+                .fillMaxHeight(0.82f),
+            shape = RoundedCornerShape(28.dp),
+            color = VibrantBackground,
+            border = androidx.compose.foundation.BorderStroke(2.dp, Color(book.colorStartHex)),
+            shadowElevation = 16.dp
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(20.dp)
+            ) {
+                // Header
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = book.category,
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(book.colorStartHex)
+                        )
+                        Text(
+                            text = book.title,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = SlateTextPrimary
+                        )
+                        Text(
+                            text = book.author,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = SlateTextSecondary
+                        )
+                    }
+
+                    IconButton(
+                        onClick = onDismiss,
+                        modifier = Modifier.testTag("close_book_dialog")
+                    ) {
+                        Icon(Icons.Default.Close, contentDescription = "Cerrar")
+                    }
+                }
+
+                Divider(modifier = Modifier.padding(vertical = 12.dp), color = SlateCardBorder)
+
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                ) {
+                    SectionCard(title = "📖 Resumen de la Obra", color = VibrantSurface) {
+                        Text(book.summary, style = MaterialTheme.typography.bodyMedium, lineHeight = 20.sp)
+                    }
+
+                    SectionCard(title = "⭐ Capítulos & Contenidos Clave", color = VibrantBlueContainer) {
+                        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                            book.keyHighlights.forEach { item ->
+                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    Text("✓", fontWeight = FontWeight.ExtraBold, color = Color(0xFF001D35))
+                                    Text(item, style = MaterialTheme.typography.bodySmall, color = Color(0xFF001D35))
+                                }
+                            }
+                        }
+                    }
+
+                    Surface(
+                        shape = RoundedCornerShape(20.dp),
+                        color = VibrantPinkContainer,
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF3BFEA))
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(14.dp),
+                            verticalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            Text(
+                                text = "👨‍🔬 Recomendación del Profesor Gómez:",
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = Color(0xFF31111D)
+                            )
+                            Text(
+                                text = book.profTip,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = SlateTextPrimary,
+                                lineHeight = 18.sp
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Button(
+                    onClick = onDismiss,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("finish_book_read_button"),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(book.colorStartHex))
+                ) {
+                    Text("Cerrar Lectura y Continuar", fontWeight = FontWeight.Bold)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun CustomGuideReaderDialog(
+    guide: StudyGuideEntity,
+    onDismiss: () -> Unit,
+    onDelete: () -> Unit,
+    onAskAiAboutGuide: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth(0.92f)
+                .fillMaxHeight(0.80f),
+            shape = RoundedCornerShape(28.dp),
+            color = VibrantBackground,
+            border = androidx.compose.foundation.BorderStroke(2.dp, VibrantPrimary),
+            shadowElevation = 16.dp
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(20.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = guide.category,
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = VibrantPrimary
+                        )
+                        Text(
+                            text = guide.title,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = SlateTextPrimary
+                        )
+                    }
+
+                    IconButton(
+                        onClick = onDismiss,
+                        modifier = Modifier.testTag("close_guide_dialog")
+                    ) {
+                        Icon(Icons.Default.Close, contentDescription = "Cerrar")
+                    }
+                }
+
+                Divider(modifier = Modifier.padding(vertical = 12.dp), color = SlateCardBorder)
+
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .background(VibrantSurface, RoundedCornerShape(16.dp))
+                        .border(1.dp, SlateCardBorder, RoundedCornerShape(16.dp))
+                        .padding(14.dp)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    Text(
+                        text = guide.content,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = SlateTextPrimary,
+                        lineHeight = 22.sp
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    OutlinedButton(
+                        onClick = onDelete,
+                        modifier = Modifier.testTag("delete_guide_button"),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = RoseError)
+                    ) {
+                        Icon(Icons.Default.Delete, contentDescription = "Eliminar", modifier = Modifier.size(18.dp))
+                    }
+
+                    Button(
+                        onClick = onAskAiAboutGuide,
+                        modifier = Modifier
+                            .weight(1f)
+                            .testTag("ask_ai_guide_button"),
+                        colors = ButtonDefaults.buttonColors(containerColor = VibrantPrimary)
+                    ) {
+                        Icon(Icons.Default.Psychology, contentDescription = null, modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text("Preguntar a Prof. Gómez", fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun SectionCard(
+    title: String,
+    color: Color,
+    content: @Composable () -> Unit
+) {
+    Card(
+        shape = RoundedCornerShape(18.dp),
+        colors = CardDefaults.cardColors(containerColor = color),
+        border = androidx.compose.foundation.BorderStroke(1.dp, SlateCardBorder),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(14.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.ExtraBold,
+                color = SlateTextPrimary
+            )
+            content()
         }
     }
 }
